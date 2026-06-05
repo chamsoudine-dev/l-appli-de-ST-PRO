@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#1b4332" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="description" content="ST-PRO - Gestion d'Arrosage et d'Entretien d'Espaces Verts" />
+  <title>ST-PRO — Gestion d'Arrosage</title>
+
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="manifest.json" />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <!-- html2canvas pour export reçu -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+  <!-- Leaflet CSS & JS for Geolocation Map -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- Splash Screen -->
+  <div id="splash-screen">
+    <div class="splash-content">
+      <div class="splash-logo">
+        <i class="fas fa-seedling"></i>
+      </div>
+      <h1 class="splash-title">ST-PRO</h1>
+      <p class="splash-subtitle">Services Techniques Professionnels</p>
+      <div class="splash-loader">
+        <div class="loader-bar"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- App Container -->
+  <div id="app" class="app-container hidden">
+
+    <!-- Header -->
+    <header class="app-header" id="app-header">
+      <div class="header-left">
+        <button class="btn-icon" id="btn-back" onclick="goBack()" style="display:none">
+          <i class="fas fa-arrow-left"></i>
+        </button>
+        <div class="header-logo">
+          <i class="fas fa-leaf" style="color:var(--gold-light)"></i>
+          <span>ST-PRO</span>
+        </div>
+      </div>
+      <div class="header-right">
+        <button class="btn-icon" onclick="showPage('map')" title="Carte Géographique">
+          <i class="fas fa-map-marked-alt"></i>
+        </button>
+        <button class="btn-icon" id="btn-notif" onclick="showPage('dashboard')">
+          <i class="fas fa-bell"></i>
+          <span class="notif-badge" id="notif-badge" style="display:none">0</span>
+        </button>
+        <button class="btn-icon" onclick="showPage('settings')">
+          <i class="fas fa-cog"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="app-main" id="app-main">
+
+      <!-- ============ PAGE DASHBOARD ============ -->
+      <section id="page-dashboard" class="page active">
+        <div class="page-content">
+          <!-- Greeting -->
+          <div class="greeting-card glass-card">
+            <div class="greeting-text">
+              <p class="greeting-sub">Bienvenue 👋</p>
+              <h2 class="greeting-title" id="greeting-title">Tableau de Bord</h2>
+              <p class="greeting-date" id="greeting-date"></p>
+            </div>
+            <div class="greeting-icon">
+              <i class="fas fa-seedling"></i>
+            </div>
+          </div>
+
+          <!-- Stats Row -->
+          <div class="stats-row">
+            <div class="stat-card glass-card" onclick="filterOrders('all')">
+              <div class="stat-icon" style="background: linear-gradient(135deg, #1b4332, #2d6a4f)">
+                <i class="fas fa-calendar-alt"></i>
+              </div>
+              <div class="stat-info">
+                <span class="stat-value" id="stat-total">0</span>
+                <span class="stat-label">Total</span>
+              </div>
+            </div>
+            <div class="stat-card glass-card" onclick="filterOrders('processing')">
+              <div class="stat-icon" style="background: linear-gradient(135deg, #ff9800, #e65100)">
+                <i class="fas fa-clock"></i>
+              </div>
+              <div class="stat-info">
+                <span class="stat-value" id="stat-processing">0</span>
+                <span class="stat-label">Planifiés</span>
+              </div>
+            </div>
+            <div class="stat-card glass-card" onclick="filterOrders('ready')">
+              <div class="stat-icon" style="background: linear-gradient(135deg, #52b788, #2d6a4f)">
+                <i class="fas fa-tint"></i>
+              </div>
+              <div class="stat-info">
+                <span class="stat-value" id="stat-ready">0</span>
+                <span class="stat-label">Arrosés</span>
+              </div>
+            </div>
+            <div class="stat-card glass-card" onclick="filterOrders('delivered')">
+              <div class="stat-icon" style="background: linear-gradient(135deg, #2e7d32, #1b5e20)">
+                <i class="fas fa-file-invoice-dollar"></i>
+              </div>
+              <div class="stat-info">
+                <span class="stat-value" id="stat-delivered">0</span>
+                <span class="stat-label">Facturés</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Revenue Card -->
+          <div class="revenue-card glass-card">
+            <div class="revenue-left">
+              <span class="revenue-label">Revenus du mois</span>
+              <span class="revenue-amount" id="revenue-month">0 FCFA</span>
+            </div>
+            <div class="revenue-right">
+              <span class="revenue-label">Aujourd'hui</span>
+              <span class="revenue-today" id="revenue-today">0 FCFA</span>
+            </div>
+          </div>
+
+          <!-- Raccourci Carte Géolocalisation -->
+          <div class="map-shortcut-card glass-card" onclick="showPage('map')" style="margin-bottom:12px; cursor:pointer">
+            <div style="display:flex; justify-content:space-between; align-items:center">
+              <div>
+                <span style="font-size:10px; text-transform:uppercase; color:var(--gold-light); font-weight:600; letter-spacing:0.5px">Suivi de Terrain</span>
+                <h4 style="font-size:15px; font-weight:700; color:#fff; margin-top:2px">Géolocalisation & Itinéraires</h4>
+                <p style="font-size:11px; color:var(--text-muted); margin-top:3px">Visualisez vos clients et optimisez vos passages.</p>
+              </div>
+              <div style="width:40px; height:40px; border-radius:50%; background:linear-gradient(135deg, var(--gold-dark), var(--gold)); display:flex; align-items:center; justify-content:center; font-size:18px; color:#fff; box-shadow:var(--shadow-gold)">
+                <i class="fas fa-map-marked-alt"></i>
+              </div>
+            </div>
+          </div>
+
+          <!-- Alert: Arrosages aujourd'hui -->
+          <div id="alert-today" class="alert-card glass-card hidden">
+            <i class="fas fa-exclamation-triangle alert-icon"></i>
+            <div class="alert-text">
+              <strong id="alert-count">0</strong> arrosage(s) planifié(s) pour aujourd'hui !
+            </div>
+          </div>
+
+          <!-- Section: Planning d'arrosage de la semaine -->
+          <div class="planning-section">
+            <div class="section-header">
+              <h3>Planning Hebdomadaire &amp; Rappels</h3>
+              <button class="btn-link" onclick="showPage('orders')">Toutes les interventions</button>
+            </div>
+            <div id="weekly-planning-list" class="planning-list">
+              <!-- Rempli dynamiquement en JS -->
+            </div>
+          </div>
+
+          <!-- Recent Orders -->
+          <div class="section-header">
+            <h3>Interventions récentes</h3>
+          </div>
+
+          <div id="recent-orders-list" class="orders-list">
+            <div class="empty-state">
+              <i class="fas fa-leaf"></i>
+              <p>Aucune intervention planifiée</p>
+              <button class="btn-primary" onclick="showNewOrder()">Planifier un arrosage</button>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ============ PAGE COMMANDES ============ -->
+      <section id="page-orders" class="page">
+        <div class="page-content">
+          <div class="page-header">
+            <h2>Interventions</h2>
+            <button class="btn-primary btn-sm" onclick="showNewOrder()">
+              <i class="fas fa-plus"></i> Planifier
+            </button>
+          </div>
+
+          <!-- Search & Filter -->
+          <div class="search-bar">
+            <i class="fas fa-search"></i>
+            <input type="text" id="orders-search" placeholder="Rechercher une intervention..." oninput="searchOrders(this.value)" />
+          </div>
+          <div class="filter-tabs" id="orders-filter-tabs">
+            <button class="filter-tab active" data-status="all" onclick="filterOrders('all', this)">Tous</button>
+            <button class="filter-tab" data-status="processing" onclick="filterOrders('processing', this)">Planifiés</button>
+            <button class="filter-tab" data-status="ready" onclick="filterOrders('ready', this)">Arrosés</button>
+            <button class="filter-tab" data-status="delivered" onclick="filterOrders('delivered', this)">Facturés</button>
+          </div>
+
+          <div id="orders-list" class="orders-list"></div>
+        </div>
+      </section>
+
+      <!-- ============ PAGE CONTRATS ============ -->
+      <section id="page-contracts" class="page">
+        <div class="page-content">
+          <div class="page-header">
+            <h2>Contrats</h2>
+            <button class="btn-primary btn-sm" onclick="showNewContract()">
+              <i class="fas fa-plus"></i> Nouveau
+            </button>
+          </div>
+
+          <!-- Info banner contrats -->
+          <div class="contract-info-banner glass-card">
+            <i class="fas fa-info-circle" style="color:var(--gold-light);font-size:18px;flex-shrink:0"></i>
+            <div>
+              <div style="font-size:12px;font-weight:600;color:var(--gold-light)">Contrats récurrents</div>
+              <div style="font-size:11px;color:var(--text-muted)">Planifiez plusieurs semaines / mois d'interventions pour un client en une seule fois.</div>
+            </div>
+          </div>
+
+          <div id="contracts-list" class="contracts-list"></div>
+        </div>
+      </section>
+
+      <!-- ============ PAGE CLIENTS ============ -->
+      <section id="page-clients" class="page">
+        <div class="page-content">
+          <div class="page-header">
+            <h2>Clients &amp; Domiciles</h2>
+            <button class="btn-primary btn-sm" onclick="showNewClient()">
+              <i class="fas fa-plus"></i> Nouveau
+            </button>
+          </div>
+
+          <div class="search-bar">
+            <i class="fas fa-search"></i>
+            <input type="text" id="clients-search" placeholder="Rechercher un client ou quartier..." oninput="searchClients(this.value)" />
+          </div>
+
+          <div id="clients-list" class="clients-list"></div>
+        </div>
+      </section>
+
+      <!-- ============ PAGE HISTORIQUE ============ -->
+      <section id="page-history" class="page">
+        <div class="page-content">
+          <div class="page-header">
+            <h2>Historique &amp; Bilans</h2>
+          </div>
+
+          <div class="history-filters glass-card">
+            <div class="form-group">
+              <label>Du</label>
+              <input type="date" id="hist-from" onchange="loadHistory()" />
+            </div>
+            <div class="form-group">
+              <label>Au</label>
+              <input type="date" id="hist-to" onchange="loadHistory()" />
+            </div>
+          </div>
+
+          <div class="revenue-card glass-card" style="margin-top:12px">
+            <div class="revenue-left">
+              <span class="revenue-label">Revenus période</span>
+              <span class="revenue-amount" id="hist-revenue">0 FCFA</span>
+            </div>
+            <div class="revenue-right">
+              <span class="revenue-label">Interventions</span>
+              <span class="revenue-today" id="hist-count">0</span>
+            </div>
+          </div>
+
+          <div id="history-list" class="orders-list"></div>
+        </div>
+      </section>
+
+      <!-- ============ PAGE GÉOLOCALISATION ============ -->
+      <section id="page-map" class="page">
+        <div class="page-content" style="display:flex; flex-direction:column; height:calc(100vh - var(--header-h) - var(--nav-h)); padding:12px; gap:10px">
+          <div class="page-header" style="margin-bottom:8px">
+            <h2>Géolocalisation</h2>
+          </div>
+
+          <!-- Moteur de recherche et Filtres sur la carte -->
+          <div style="display:flex; flex-direction:column; gap:8px">
+            <div class="search-bar" style="margin-bottom:0">
+              <i class="fas fa-search"></i>
+              <input type="text" id="map-search" placeholder="Rechercher un domicile..." oninput="searchMapClients(this.value)" />
+            </div>
+            
+            <div class="filter-tabs" id="map-filter-tabs" style="margin-bottom:0; overflow:hidden">
+              <button class="filter-tab active" id="btn-map-filter-all" onclick="filterMapMarkers('all')">Tous les domiciles</button>
+              <button class="filter-tab" id="btn-map-filter-today" onclick="filterMapMarkers('today')">Passages d'aujourd'hui</button>
+            </div>
+          </div>
+
+          <!-- Conteneur de la carte Leaflet -->
+          <div id="leaflet-map-container" style="flex:1; width:100%; border-radius:var(--radius-lg); border:1px solid var(--border-color); overflow:hidden; position:relative; box-shadow:var(--shadow-md)"></div>
+        </div>
+      </section>
+
+      <!-- ============ PAGE PARAMÈTRES ============ -->
+      <section id="page-settings" class="page">
+        <div class="page-content">
+          <div class="page-header">
+            <h2>Paramètres</h2>
+          </div>
+
+          <div class="settings-form glass-card">
+            <h3 class="settings-section-title"><i class="fas fa-leaf"></i> ST-PRO Configuration</h3>
+            <div class="form-group">
+              <label>Nom de l'entreprise</label>
+              <input type="text" id="set-name" placeholder="ST-PRO Services Techniques Professionnels" />
+            </div>
+            <div class="form-group">
+              <label>Adresse</label>
+              <input type="text" id="set-address" placeholder="Niamey, Niger" />
+            </div>
+            <div class="form-group">
+              <label>Téléphone</label>
+              <input type="tel" id="set-phone" placeholder="+227 76 75 74 68 / 91 99 04 66" />
+            </div>
+            <div class="form-group">
+              <label>Email (optionnel)</label>
+              <input type="email" id="set-email" placeholder="stpro8481@gmail.com" />
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>NIF</label>
+                <input type="text" id="set-nif" placeholder="141576 /P" />
+              </div>
+              <div class="form-group">
+                <label>RCCM</label>
+                <input type="text" id="set-rccm" placeholder="NE/NIM/01/2025/A10/02064" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Slogan de pied de reçu</label>
+              <textarea id="set-footer" rows="2" placeholder="ST-PRO — Un cadre vert, propre et harmonieux valorise votre maison."></textarea>
+            </div>
+            <div class="form-group">
+              <label>Devise</label>
+              <select id="set-currency">
+                <option value="FCFA">FCFA</option>
+                <option value="MAD">MAD (Dirham)</option>
+                <option value="EUR">EUR (€)</option>
+                <option value="USD">USD ($)</option>
+                <option value="GNF">GNF (Franc Guinéen)</option>
+                <option value="XOF">XOF (Franc CFA)</option>
+              </select>
+            </div>
+            <button class="btn-primary btn-full" onclick="saveSettings()">
+              <i class="fas fa-save"></i> Sauvegarder
+            </button>
+          </div>
+
+          <div class="settings-form glass-card" style="margin-top:16px">
+            <h3 class="settings-section-title"><i class="fas fa-seedling"></i> Tarifs des prestations</h3>
+            <div id="tarifs-list"></div>
+            <button class="btn-secondary btn-full" onclick="addTarifRow()">
+              <i class="fas fa-plus"></i> Ajouter une prestation
+            </button>
+            <button class="btn-primary btn-full" style="margin-top:8px" onclick="saveTarifs()">
+              <i class="fas fa-save"></i> Sauvegarder les tarifs
+            </button>
+          </div>
+
+          <div class="settings-form glass-card" style="margin-top:16px; border: 1px solid rgba(239,68,68,0.3)">
+            <h3 class="settings-section-title" style="color:#ef4444"><i class="fas fa-trash-alt"></i> Zone de Danger</h3>
+            <button class="btn-danger btn-full" onclick="confirmClearData()">
+              <i class="fas fa-database"></i> Effacer toutes les données
+            </button>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav" id="bottom-nav">
+      <button class="nav-item active" data-page="dashboard" onclick="showPage('dashboard', this)">
+        <i class="fas fa-home"></i>
+        <span>Accueil</span>
+      </button>
+      <button class="nav-item" data-page="orders" onclick="showPage('orders', this)">
+        <i class="fas fa-calendar-alt"></i>
+        <span>Planning</span>
+      </button>
+      <div class="nav-fab-wrapper">
+        <button class="nav-fab" onclick="showNewOrder()" title="Planifier une intervention">
+          <i class="fas fa-tint"></i>
+        </button>
+      </div>
+      <button class="nav-item" data-page="contracts" onclick="showPage('contracts', this)">
+        <i class="fas fa-file-contract"></i>
+        <span>Contrats</span>
+      </button>
+      <button class="nav-item" data-page="clients" onclick="showPage('clients', this)">
+        <i class="fas fa-users"></i>
+        <span>Clients</span>
+      </button>
+    </nav>
+  </div>
+
+  <!-- ============ MODALS ============ -->
+
+  <!-- Modal Overlay -->
+  <div id="modal-overlay" class="modal-overlay" onclick="closeAllModals()"></div>
+
+  <!-- Modal: Nouvelle / Modifier Commande (Intervention) -->
+  <div id="modal-order" class="modal modal-full">
+    <div class="modal-header">
+      <h3 id="modal-order-title">Planifier une Intervention</h3>
+      <button class="btn-icon" onclick="closeModal('modal-order')">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="order-id" />
+
+      <!-- Client -->
+      <div class="form-section">
+        <h4 class="form-section-title"><i class="fas fa-user"></i> Client &amp; Domicile</h4>
+        <div class="form-group">
+          <label>Rechercher un client existant</label>
+          <div class="client-search-wrap">
+            <input type="text" id="client-search-input" placeholder="Nom ou téléphone..." oninput="searchClientForOrder(this.value)" autocomplete="off" />
+            <div id="client-suggestions" class="client-suggestions hidden"></div>
+          </div>
+        </div>
+        <div id="selected-client-info" class="selected-client hidden">
+          <i class="fas fa-user-check"></i>
+          <span id="selected-client-name"></span>
+          <button onclick="clearSelectedClient()" class="btn-icon-sm"><i class="fas fa-times"></i></button>
+        </div>
+        <div id="new-client-fields">
+          <div class="form-row">
+            <div class="form-group">
+              <label>Prénom *</label>
+              <input type="text" id="client-firstname" placeholder="Prénom" />
+            </div>
+            <div class="form-group">
+              <label>Nom *</label>
+              <input type="text" id="client-lastname" placeholder="Nom" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Téléphone * (WhatsApp)</label>
+            <input type="tel" id="client-phone" placeholder="Ex: +227 99 99 99 99" />
+          </div>
+        </div>
+
+        <!-- Section GPS Intervention -->
+        <input type="hidden" id="order-client-lat" />
+        <input type="hidden" id="order-client-lng" />
+        <div class="gps-section" style="margin-top: 12px; border-top: 1px dashed var(--border-color); padding-top: 12px;">
+          <div class="gps-section-title" style="font-size:12px; font-weight:600; color:var(--gold-light); margin-bottom:8px">
+            <i class="fas fa-map-marker-alt"></i> Géolocalisation Domicile
+          </div>
+          <div id="order-gps-status" class="gps-status" style="margin-bottom:8px">
+            <div class="gps-empty">
+              <i class="fas fa-map-marker-alt" style="color:var(--text-muted); font-size:12px"></i>
+              <span style="color:var(--text-muted); font-size:12px">Aucune position GPS</span>
+            </div>
+          </div>
+          <div style="display:flex; gap:8px">
+            <button class="btn-primary" style="flex:1; font-size:12px; padding:8px 12px" onclick="captureGPSForOrder()">
+              <i class="fas fa-crosshairs"></i> Capturer Position
+            </button>
+            <button id="btn-order-gps-view" class="btn-secondary hidden" style="flex:1; font-size:12px; padding:8px 12px" onclick="openOrderGPSRoute()">
+              <i class="fas fa-route"></i> Itinéraire GPS
+            </button>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- Articles (Prestations) -->
+      <div class="form-section">
+        <h4 class="form-section-title"><i class="fas fa-seedling"></i> Prestations &amp; Formules</h4>
+        <div id="articles-list">
+          <!-- Rows dynamiques -->
+        </div>
+        <button class="btn-secondary btn-full" onclick="addArticleRow()" style="margin-top:8px">
+          <i class="fas fa-plus"></i> Ajouter une prestation
+        </button>
+      </div>
+
+      <!-- Total -->
+      <div class="total-card glass-card">
+        <div class="total-row">
+          <span>Sous-total</span>
+          <span id="order-subtotal">0</span>
+        </div>
+        <div class="total-row">
+          <span>Remise (%)</span>
+          <input type="number" id="order-discount" min="0" max="100" value="0" oninput="recalcTotal()" style="width:60px;text-align:center" />
+        </div>
+        <div class="total-row total-final">
+          <span>TOTAL</span>
+          <span id="order-total">0</span>
+        </div>
+      </div>
+
+      <!-- Dates & Planification -->
+      <div class="form-section">
+        <h4 class="form-section-title"><i class="fas fa-calendar-alt"></i> Planification &amp; Déplacement</h4>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Date de planification *</label>
+            <input type="date" id="order-arrival" />
+          </div>
+          <div class="form-group">
+            <label>Date d'intervention *</label>
+            <input type="date" id="order-pickup" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="toggle-label">
+            <span><i class="fas fa-car"></i> Déplacement de l'équipe</span>
+            <label class="toggle-switch">
+              <input type="checkbox" id="order-delivery" onchange="toggleDelivery(this)" />
+              <span class="toggle-slider"></span>
+            </label>
+          </label>
+        </div>
+        <div id="delivery-address-wrap" class="hidden">
+          <div class="form-group">
+            <label>Adresse d'intervention (si différente)</label>
+            <input type="text" id="order-delivery-address" placeholder="Quartier, Rue..." />
+          </div>
+          <div class="form-group">
+            <label>Frais de déplacement</label>
+            <input type="number" id="order-delivery-fee" placeholder="0" value="0" oninput="recalcTotal()" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Consignes &amp; Notes de sécurité</label>
+          <textarea id="order-notes" rows="2" placeholder="Instructions de passage, présence de chiens, vigilance zone..."></textarea>
+        </div>
+      </div>
+
+      <!-- Boutons -->
+      <div class="form-actions">
+        <button class="btn-secondary" onclick="closeModal('modal-order')">Annuler</button>
+        <button class="btn-primary" onclick="saveOrder()">
+          <i class="fas fa-save"></i> Enregistrer
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Nouveau / Modifier Client -->
+  <div id="modal-client" class="modal">
+    <div class="modal-header">
+      <h3 id="modal-client-title">Nouveau Client</h3>
+      <button class="btn-icon" onclick="closeModal('modal-client')">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="client-id" />
+      <!-- Champs GPS cachés -->
+      <input type="hidden" id="edit-client-lat" />
+      <input type="hidden" id="edit-client-lng" />
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Prénom *</label>
+          <input type="text" id="edit-client-firstname" placeholder="Prénom" />
+        </div>
+        <div class="form-group">
+          <label>Nom *</label>
+          <input type="text" id="edit-client-lastname" placeholder="Nom" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Téléphone * (WhatsApp)</label>
+        <input type="tel" id="edit-client-phone" placeholder="Ex: +227 99 99 99 99" />
+      </div>
+      <div class="form-group">
+        <label>Email (optionnel)</label>
+        <input type="email" id="edit-client-email" placeholder="client@email.com" />
+      </div>
+      <div class="form-group">
+        <label>Adresse / Domicile (optionnel)</label>
+        <input type="text" id="edit-client-address" placeholder="Quartier, Rue, Ville..." />
+      </div>
+
+      <!-- Section GPS -->
+      <div class="gps-section">
+        <div class="gps-section-title">
+          <i class="fas fa-map-marker-alt"></i> Position GPS du Domicile
+        </div>
+        <div id="gps-status" class="gps-status">
+          <div class="gps-empty">
+            <i class="fas fa-map-marker-alt" style="color:var(--text-muted)"></i>
+            <span style="color:var(--text-muted)">Aucun GPS enregistré</span>
+          </div>
+        </div>
+        <button class="btn-gps btn-full" onclick="captureGPSInForm()">
+          <i class="fas fa-crosshairs"></i> Capturer la Position GPS
+        </button>
+        <p class="gps-hint">Rendez-vous chez le client, puis appuyez pour enregistrer sa position. Cela permettra à votre équipe de le retrouver facilement.</p>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Zone / Niveau de Risque</label>
+          <select id="edit-client-risk">
+            <option value="low">Standard (Sécurisé)</option>
+            <option value="medium">Zone Sensible</option>
+            <option value="high">Zone Dangereuse ⚠️</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Jour d'arrosage</label>
+          <select id="edit-client-day">
+            <option value="Lundi">Lundi</option>
+            <option value="Mardi">Mardi</option>
+            <option value="Mercredi">Mercredi</option>
+            <option value="Jeudi">Jeudi</option>
+            <option value="Vendredi">Vendredi</option>
+            <option value="Samedi">Samedi</option>
+            <option value="Dimanche">Dimanche</option>
+            <option value="Variable">Variable</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Formule / Fréquence</label>
+          <select id="edit-client-frequency">
+            <option value="basique">Formule Basique (par intervention)</option>
+            <option value="standard">Formule Standard (2 passages/mois)</option>
+            <option value="premium">Formule Premium (Sur Devis)</option>
+            <option value="hebdo">Hebdomadaire (1 passage/semaine)</option>
+            <option value="custom">Autre / Personnalisé</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Plantes / Jardin</label>
+          <input type="text" id="edit-client-plants" placeholder="Ex: 8 arbres, 15 pots" />
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="btn-secondary" onclick="closeModal('modal-client')">Annuler</button>
+        <button class="btn-primary" onclick="saveClient()">
+          <i class="fas fa-save"></i> Sauvegarder
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Détail Commande (Intervention) -->
+  <div id="modal-order-detail" class="modal modal-full">
+    <div class="modal-header">
+      <h3>Détail Intervention</h3>
+      <button class="btn-icon" onclick="closeModal('modal-order-detail')">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div class="modal-body" id="order-detail-content"></div>
+  </div>
+
+  <!-- Modal: Nouveau Contrat -->
+  <div id="modal-contract" class="modal modal-full">
+    <div class="modal-header">
+      <h3 id="modal-contract-title">Nouveau Contrat d'Entretien</h3>
+      <button class="btn-icon" onclick="closeModal('modal-contract')">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="contract-id" />
+
+      <!-- Client -->
+      <div class="form-section">
+        <h4 class="form-section-title"><i class="fas fa-user"></i> Client</h4>
+        <div class="form-group">
+          <label>Rechercher un client existant</label>
+          <div class="client-search-wrap">
+            <input type="text" id="contract-client-search" placeholder="Nom ou téléphone..." oninput="searchClientForContract(this.value)" autocomplete="off" />
+            <div id="contract-client-suggestions" class="client-suggestions hidden"></div>
+          </div>
+        </div>
+        <div id="contract-selected-client-info" class="selected-client hidden">
+          <i class="fas fa-user-check"></i>
+          <span id="contract-selected-client-name"></span>
+          <button onclick="clearSelectedClientForContract()" class="btn-icon-sm"><i class="fas fa-times"></i></button>
+        </div>
+        <div id="contract-new-client-fields">
+          <div class="form-row">
+            <div class="form-group">
+              <label>Prénom *</label>
+              <input type="text" id="contract-client-firstname" placeholder="Prénom" />
+            </div>
+            <div class="form-group">
+              <label>Nom *</label>
+              <input type="text" id="contract-client-lastname" placeholder="Nom" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Téléphone (WhatsApp)</label>
+            <input type="tel" id="contract-client-phone" placeholder="Ex: +227 99 99 99 99" />
+          </div>
+        </div>
+
+        <!-- Section GPS Contrat -->
+        <input type="hidden" id="contract-client-lat" />
+        <input type="hidden" id="contract-client-lng" />
+        <div class="gps-section" style="margin-top: 12px; border-top: 1px dashed var(--border-color); padding-top: 12px;">
+          <div class="gps-section-title" style="font-size:12px; font-weight:600; color:var(--gold-light); margin-bottom:8px">
+            <i class="fas fa-map-marker-alt"></i> Géolocalisation Domicile
+          </div>
+          <div id="contract-gps-status" class="gps-status" style="margin-bottom:8px">
+            <div class="gps-empty">
+              <i class="fas fa-map-marker-alt" style="color:var(--text-muted); font-size:12px"></i>
+              <span style="color:var(--text-muted); font-size:12px">Aucune position GPS</span>
+            </div>
+          </div>
+          <div style="display:flex; gap:8px">
+            <button class="btn-primary" style="flex:1; font-size:12px; padding:8px 12px" onclick="captureGPSForContract()">
+              <i class="fas fa-crosshairs"></i> Capturer Position
+            </button>
+            <button id="btn-contract-gps-view" class="btn-secondary hidden" style="flex:1; font-size:12px; padding:8px 12px" onclick="openContractGPSRoute()">
+              <i class="fas fa-route"></i> Itinéraire GPS
+            </button>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- Prestations -->
+      <div class="form-section">
+        <h4 class="form-section-title"><i class="fas fa-seedling"></i> Prestations par passage</h4>
+        <div id="contract-articles-list"></div>
+        <button class="btn-secondary btn-full" onclick="addContractArticleRow()" style="margin-top:8px">
+          <i class="fas fa-plus"></i> Ajouter une prestation
+        </button>
+        <div class="form-row" style="margin-top:12px">
+          <div class="form-group">
+            <label>Remise (%)</label>
+            <input type="number" id="contract-discount" min="0" max="100" value="0" oninput="updateContractPreview()" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Planification -->
+      <div class="form-section">
+        <h4 class="form-section-title"><i class="fas fa-calendar-alt"></i> Période &amp; Planification</h4>
+
+        <!-- Sélection de la période -->
+        <div class="form-row">
+          <div class="form-group">
+            <label>Date de début *</label>
+            <input type="date" id="contract-start" oninput="onContractPeriodChange()" />
+          </div>
+          <div class="form-group">
+            <label>Date de fin *</label>
+            <input type="date" id="contract-end" oninput="onContractPeriodChange()" />
+          </div>
+        </div>
+
+        <!-- Indicateur de période -->
+        <div id="period-indicator" style="font-size:12px;color:var(--text-muted);margin-bottom:10px;text-align:center;display:none">
+          <i class="fas fa-calendar-check" style="color:var(--gold)"></i>
+          <span id="period-text"></span>
+        </div>
+
+        <!-- Assistant de Planification Rapide -->
+        <div id="quick-schedule-wrap" class="glass-card" style="margin-top: 10px; margin-bottom: 14px; padding: 14px; border: 1px dashed var(--border-color); display: none;">
+          <div style="font-size:12px; font-weight:600; color:var(--gold-light); margin-bottom:8px">
+            <i class="fas fa-magic"></i> Planification rapide récurrente
+          </div>
+          <p style="font-size:11px; color:var(--text-muted); margin-bottom:10px">
+            Choisissez les jours de passage de la semaine à appliquer sur toute la période :
+          </p>
+          <div style="display:flex; justify-content:space-between; gap:6px; margin-bottom:12px">
+            <button type="button" class="btn-quick-day" data-day="1" onclick="toggleQuickDay(this)">Lun</button>
+            <button type="button" class="btn-quick-day" data-day="2" onclick="toggleQuickDay(this)">Mar</button>
+            <button type="button" class="btn-quick-day" data-day="3" onclick="toggleQuickDay(this)">Mer</button>
+            <button type="button" class="btn-quick-day" data-day="4" onclick="toggleQuickDay(this)">Jeu</button>
+            <button type="button" class="btn-quick-day" data-day="5" onclick="toggleQuickDay(this)">Ven</button>
+            <button type="button" class="btn-quick-day" data-day="6" onclick="toggleQuickDay(this)">Sam</button>
+            <button type="button" class="btn-quick-day" data-day="0" onclick="toggleQuickDay(this)">Dim</button>
+          </div>
+          <div style="display:flex; gap:10px">
+            <button type="button" class="btn-primary btn-sm" style="flex:1; font-size:12px; padding:8px 12px" onclick="applyQuickSchedule()">
+              <i class="fas fa-calendar-plus"></i> Appliquer à la période
+            </button>
+            <button type="button" class="btn-danger btn-sm" style="font-size:12px; padding:8px 12px" onclick="clearCalendarPlanner()">
+              <i class="fas fa-trash-alt"></i> Effacer tout
+            </button>
+          </div>
+        </div>
+
+        <!-- Calendrier de sélection des dates -->
+        <div id="calendar-planner-wrap">
+          <div class="calendar-no-dates">
+            <i class="fas fa-calendar-alt" style="font-size:28px;margin-bottom:8px;display:block;opacity:0.4"></i>
+            Sélectionnez une date de début et de fin pour voir le calendrier de planification
+          </div>
+        </div>
+
+        <!-- Résumé des dates sélectionnées -->
+        <div id="calendar-summary-wrap" class="calendar-summary hidden" style="margin-top:10px">
+          <div class="calendar-summary-title">
+            <i class="fas fa-check-circle"></i> <span id="calendar-summary-count">0</span> passage(s) programmé(s)
+          </div>
+          <div id="calendar-summary-chips" class="calendar-summary-chips"></div>
+        </div>
+
+        <div class="form-group" style="margin-top:12px">
+          <label>Notes du contrat</label>
+          <textarea id="contract-notes" rows="2" placeholder="Instructions spéciales, accès, notes..."></textarea>
+        </div>
+      </div>
+
+      <!-- Prévisualisation -->
+      <div class="contract-preview glass-card" id="contract-preview">
+        <!-- Mis à jour dynamiquement -->
+      </div>
+
+      <!-- Boutons -->
+      <div class="form-actions">
+        <button class="btn-secondary" onclick="closeModal('modal-contract')">Annuler</button>
+        <button class="btn-primary" onclick="saveContract()">
+          <i class="fas fa-save"></i> Créer le Contrat
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Détail Contrat -->
+  <div id="modal-contract-detail" class="modal modal-full">
+    <div class="modal-header">
+      <h3>Détail du Contrat</h3>
+      <button class="btn-icon" onclick="closeModal('modal-contract-detail')">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div class="modal-body" id="contract-detail-content"></div>
+  </div>
+
+  <!-- Modal: Reçu -->
+  <div id="modal-receipt" class="modal modal-full">
+    <div class="modal-header">
+      <h3>Reçu Officiel</h3>
+      <button class="btn-icon" onclick="closeModal('modal-receipt')">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div id="receipt-container"></div>
+      <div class="receipt-actions">
+        <button class="btn-whatsapp btn-full" id="btn-send-whatsapp" onclick="sendReceiptWhatsApp()">
+          <i class="fab fa-whatsapp"></i> Envoyer via WhatsApp
+        </button>
+        <button class="btn-secondary btn-full" style="margin-top:8px" onclick="printReceipt()">
+          <i class="fas fa-print"></i> Imprimer / PDF
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Confirmation -->
+  <div id="modal-confirm" class="modal modal-sm">
+    <div class="modal-header">
+      <h3 id="confirm-title">Confirmation</h3>
+      <button class="btn-icon" onclick="closeModal('modal-confirm')">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div class="modal-body">
+      <p id="confirm-message"></p>
+      <div class="form-actions">
+        <button class="btn-secondary" onclick="closeModal('modal-confirm')">Annuler</button>
+        <button class="btn-danger" id="confirm-action-btn">Confirmer</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="toast hidden">
+    <i class="fas fa-check-circle toast-icon"></i>
+    <span id="toast-message">Message</span>
+  </div>
+
+  <!-- Scripts -->
+  <script src="cordova.js"></script>
+  <script src="js/db.js"></script>
+  <script src="js/receipt.js"></script>
+  <script src="js/orders.js"></script>
+  <script src="js/clients.js"></script>
+  <script src="js/map.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

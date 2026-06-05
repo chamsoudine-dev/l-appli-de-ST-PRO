@@ -1,0 +1,26 @@
+<?xml version='1.0' encoding='utf-8'?>
+<widget id="com.stpro.arrosage" version="1.0.0" android-versionCode="1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+    <name>ST-PRO</name>
+    <description>
+        ST-PRO — Gestion d'Arrosage et d'Entretien d'Espaces Verts.
+    </description>
+    <author email="stpro8481@gmail.com" href="mailto:stpro8481@gmail.com">
+        ST-PRO Services Techniques Professionnels
+    </author>
+    <content src="index.html" />
+    <allow-intent href="http://*/*" />
+    <allow-intent href="https://*/*" />
+
+    <!-- Préférences globales -->
+    <preference name="Orientation" value="portrait" />
+    <preference name="StatusBarBackgroundColor" value="#1b4332" />
+    <preference name="StatusBarStyle" value="lightcontent" />
+
+    <!-- Icône globale -->
+    <icon src="www/icons/icon-512.png" />
+
+    <platform name="android">
+        <allow-intent href="market:*" />
+        <preference name="AndroidXAppName" value="ST-PRO" />
+    </platform>
+</widget>
