@@ -4,26 +4,26 @@
 
 /* --- Variables CSS --- */
 :root {
-  --bg-primary: #091811;
-  --bg-secondary: #0e261b;
-  --bg-card: rgba(255, 255, 255, 0.05);
-  --bg-card-hover: rgba(255, 255, 255, 0.08);
-  --border-color: rgba(82, 183, 136, 0.15);
-  --border-glow: rgba(82, 183, 136, 0.35);
+  --bg-primary: #0a0f1d; /* Bleu nuit moderne */
+  --bg-secondary: #121826; /* Bleu nuit plus foncé */
+  --bg-card: rgba(255, 255, 255, 0.04);
+  --bg-card-hover: rgba(255, 255, 255, 0.07);
+  --border-color: rgba(56, 189, 248, 0.15); /* Bleu ciel translucide */
+  --border-glow: rgba(56, 189, 248, 0.35);
 
-  --gold: #2d6a4f; /* Vert feuille de ST-PRO */
-  --gold-light: #52b788; /* Vert feuille clair */
-  --gold-dark: #1b4332; /* Vert forêt foncé */
-  --accent: #e65100; /* Orange de ST-PRO */
-  --accent-light: #f8961e; /* Orange clair */
-  --success: #2ecc71;
+  --gold: #0284c7; /* Bleu océan de ST-PRO Pressing */
+  --gold-light: #38bdf8; /* Bleu ciel lumineux */
+  --gold-dark: #0369a1; /* Bleu foncé */
+  --accent: #f43f5e; /* Rose corail accent */
+  --accent-light: #fb7185; /* Rose clair */
+  --success: #10b981; /* Vert moderne */
   --warning: #f59e0b;
   --danger: #ef4444;
   --whatsapp: #25D366;
 
-  --text-primary: #f4f9f6;
-  --text-secondary: #a7c0b4;
-  --text-muted: #6b8c7e;
+  --text-primary: #f8fafc;
+  --text-secondary: #cbd5e1;
+  --text-muted: #64748b;
 
   --radius-sm: 8px;
   --radius-md: 14px;
@@ -34,10 +34,10 @@
   --shadow-sm: 0 2px 8px rgba(0,0,0,0.4);
   --shadow-md: 0 8px 24px rgba(0,0,0,0.5);
   --shadow-lg: 0 16px 48px rgba(0,0,0,0.6);
-  --shadow-gold: 0 4px 20px rgba(82,183,136,0.25);
+  --shadow-gold: 0 4px 20px rgba(56,189,248,0.25);
 
   --font-main: 'Inter', sans-serif;
-  --font-display: 'Inter', sans-serif; /* Plus moderne et fonctionnel pour une app de service */
+  --font-display: 'Inter', sans-serif;
 
   --header-h: 64px;
   --nav-h: 72px;

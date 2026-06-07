@@ -390,19 +390,19 @@ function clearAllData() {
   });
 }
 
-/* ---- Default Tarifs — extraits de la fiche de proposition ST-PRO ---- */
+/* ---- Default Tarifs — ST-PRO Pressing ---- */
 const DEFAULT_TARIFS = [
-  { name: 'Formule Entretien Basique (par intervention)', price: 4000 },
-  { name: 'Formule Entretien Standard (mensuel - 2 passages)', price: 10000 },
-  { name: 'Formule Premium (Sur Devis)', price: 0 },
-  { name: "Installation et entretien d'un système d'arrosage automatique", price: 15000 },
-  { name: "Nettoyage des pots et espaces verts", price: 3000 },
-  { name: "Taille légère des plantes et arbustes", price: 3500 },
-  { name: "Retrait des feuilles sèches et mauvaises herbes", price: 2000 },
-  { name: "Contrôle de l'état général des plantes", price: 1500 },
-  { name: "Remplacement et repositionnement des pots", price: 2000 },
-  { name: "Apport de conseils d'entretien", price: 1500 },
-  { name: "Entretien décoratif du jardin", price: 4000 }
+  { name: 'Chemise (Lavage + Repassage)', price: 1000 },
+  { name: 'Pantalon (Lavage + Repassage)', price: 1000 },
+  { name: 'Veste / Blouson (Nettoyage à sec)', price: 1500 },
+  { name: 'Costume 2 Pièces (Nettoyage à sec)', price: 2500 },
+  { name: 'Robe Simple (Lavage + Repassage)', price: 1500 },
+  { name: 'Robe de soirée / Pagne (Lavage + Repassage)', price: 2500 },
+  { name: 'Drap de lit 2 places (Lavage)', price: 1500 },
+  { name: 'Couette / Couverture (Lavage)', price: 3000 },
+  { name: 'T-shirt / Polo (Lavage + Repassage)', price: 800 },
+  { name: 'Repassage simple (par habit)', price: 500 },
+  { name: 'Abonnement Mensuel (30 habits)', price: 22000 }
 ];
 
 /* ---- Helpers dates ---- */

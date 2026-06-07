@@ -4,16 +4,16 @@
 
 const CACHE_NAME = 'stpro-v2';
 const ASSETS = [
-  '/',
-  '/index.html',
-  '/css/style.css',
-  '/js/db.js',
-  '/js/receipt.js',
-  '/js/orders.js',
-  '/js/clients.js',
-  '/js/map.js',
-  '/js/app.js',
-  '/manifest.json'
+  './',
+  'index.html',
+  'css/style.css',
+  'js/db.js',
+  'js/receipt.js',
+  'js/orders.js',
+  'js/clients.js',
+  'js/map.js',
+  'js/app.js',
+  'manifest.json'
 ];
 
 /* ---- Installation ---- */
@@ -64,7 +64,7 @@ self.addEventListener('fetch', (event) => {
       }).catch(() => {
         // Retourner l'index pour les navigations
         if (event.request.mode === 'navigate') {
-          return caches.match('/index.html');
+          return caches.match('index.html');
         }
       });
     })

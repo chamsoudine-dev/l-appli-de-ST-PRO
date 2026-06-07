@@ -77,7 +77,7 @@ function renderClientCard(client, orderCount = 0) {
         <div class="client-name">${escapeHtml(fullName)} ${riskBadge}</div>
         <div class="client-phone"><i class="fas fa-map-marker-alt" style="font-size:10px;color:var(--gold-light);margin-right:4px"></i>${escapeHtml(client.address || 'Pas d\'adresse')}${gpsIcon}</div>
         <div style="font-size:11px;color:var(--text-muted);margin-top:2px">
-          <i class="fas fa-calendar-day" style="font-size:10px;color:var(--accent-light);margin-right:4px"></i>Arrosage : <strong>${dayStr}</strong> (${freqStr})
+          <i class="fas fa-calendar-day" style="font-size:10px;color:var(--accent-light);margin-right:4px"></i>Passage habituel : <strong>${dayStr}</strong> (${freqStr})
         </div>
       </div>
       <div class="client-actions">
@@ -104,10 +104,10 @@ function getInitials(firstname, lastname) {
 
 function getFrequencyLabel(freq) {
   const map = {
-    basique: 'Formule Entretien Basique (4 000 FCFA / intervention)',
-    standard: 'Formule Entretien Standard (10 000 FCFA / mois)',
+    basique: 'Formule Standard (au vêtement)',
+    standard: 'Abonnement Mensuel Express',
     premium: 'Formule Premium (Sur Devis)',
-    hebdo: 'Hebdomadaire (1 passage/semaine)',
+    hebdo: 'Hebdomadaire (Ramassage & Lavage)',
     custom: 'Prestation Personnalisée'
   };
   return map[freq] || freq || 'Non définie';
@@ -115,8 +115,8 @@ function getFrequencyLabel(freq) {
 
 function getFrequencyLabelAbbr(freq) {
   const map = {
-    basique: 'Basique',
-    standard: 'Standard',
+    basique: 'Standard',
+    standard: 'Mensuel',
     premium: 'Premium',
     hebdo: 'Hebdo',
     custom: 'Perso'
@@ -233,17 +233,17 @@ async function showClientDetail(clientId) {
 
     <!-- Détails Jardin -->
     <div class="glass-card" style="margin-bottom:16px;padding:14px">
-      <div style="font-size:11px;color:var(--accent-light);text-transform:uppercase;font-weight:700;letter-spacing:1px;margin-bottom:8px">Fiche Technique Jardin</div>
-      <div class="detail-row"><span class="detail-label">Plantes / Jardin</span><span class="detail-value" style="font-weight:600">${escapeHtml(client.plantInfo || 'Non précisé')}</span></div>
-      <div class="detail-row"><span class="detail-label">Fréquence</span><span class="detail-value">${getFrequencyLabel(client.frequency)}</span></div>
-      <div class="detail-row"><span class="detail-label">Jour d'arrosage</span><span class="detail-value" style="color:var(--gold-light);font-weight:600">${escapeHtml(client.wateringDay || 'Non défini')}</span></div>
+      <div style="font-size:11px;color:var(--accent-light);text-transform:uppercase;font-weight:700;letter-spacing:1px;margin-bottom:8px">Fiche Pressing</div>
+      <div class="detail-row"><span class="detail-label">Préférences de lavage</span><span class="detail-value" style="font-weight:600">${escapeHtml(client.plantInfo || 'Non précisé')}</span></div>
+      <div class="detail-row"><span class="detail-label">Abonnement</span><span class="detail-value">${getFrequencyLabel(client.frequency)}</span></div>
+      <div class="detail-row"><span class="detail-label">Jour de passage</span><span class="detail-value" style="color:var(--gold-light);font-weight:600">${escapeHtml(client.wateringDay || 'Non défini')}</span></div>
     </div>
 
     <!-- Stats client -->
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
       <div class="glass-card" style="text-align:center;padding:12px">
         <div style="font-size:24px;font-weight:800;color:var(--gold-light)">${orders.length}</div>
-        <div style="font-size:11px;color:var(--text-muted)">Interventions</div>
+        <div style="font-size:11px;color:var(--text-muted)">Dépôts</div>
       </div>
       <div class="glass-card" style="text-align:center;padding:12px">
         <div style="font-size:18px;font-weight:800;color:var(--accent-light)">${formatMoney(totalSpent, currency)}</div>
@@ -253,7 +253,7 @@ async function showClientDetail(clientId) {
 
     <!-- Commandes récentes -->
     <div class="detail-section">
-      <div class="detail-section-title"><i class="fas fa-calendar-alt"></i> Interventions récentes</div>
+      <div class="detail-section-title"><i class="fas fa-calendar-alt"></i> Dépôts récents</div>
       ${ordersHtml}
     </div>
 
@@ -261,13 +261,13 @@ async function showClientDetail(clientId) {
     <div class="detail-actions">
       ${client.phone ? `
       <button class="btn-whatsapp btn-full" onclick="sendWateringReminderById(${client.id})">
-        <i class="fab fa-whatsapp"></i> Rappel d'arrosage WhatsApp
+        <i class="fab fa-whatsapp"></i> Rappel de dépôt WhatsApp
       </button>` : ''}
       <button class="btn-primary btn-full" onclick="showEditClient(${client.id})">
         <i class="fas fa-edit"></i> Modifier Profil
       </button>
       <button class="btn-primary btn-full" onclick="closeModal('modal-order-detail');showNewOrderForClient(${client.id})">
-        <i class="fas fa-plus"></i> Planifier un Passage
+        <i class="fas fa-plus"></i> Créer un Dépôt
       </button>
       <button class="btn-danger btn-full" onclick="confirmDeleteClient(${client.id})">
         <i class="fas fa-trash"></i> Supprimer Client
@@ -275,7 +275,7 @@ async function showClientDetail(clientId) {
     </div>
   `;
 
-  document.querySelector('#modal-order-detail .modal-header h3').textContent = 'Profil Client & Domicile';
+  document.querySelector('#modal-order-detail .modal-header h3').textContent = 'Profil Client';
   openModal('modal-order-detail');
 }
 
@@ -531,14 +531,14 @@ async function sendWateringReminderById(clientId) {
   }
 
   const message = `
-🌱 *ST-PRO SERVICES*
+🧺 *ST-PRO PRESSING*
 ━━━━━━━━━━━━━━━━━━━
 Bonjour *${fullName}* 👋
 
-Nous vous rappelons que le passage de notre équipe pour l'arrosage et l'entretien de votre jardin est prévu pour *${dayStr}*.
+Nous vous rappelons que le ramassage / dépôt de vos vêtements est prévu pour *${dayStr}*.
 
 Formule : ${getFrequencyLabel(client.frequency)}
-Jardin : ${client.plantInfo || 'Espaces verts'}
+Préférences : ${client.plantInfo || 'Aucune consigne particulière'}
 ${riskWarning}
 ━━━━━━━━━━━━━━━━━━━
 Merci de votre confiance ! 🙏

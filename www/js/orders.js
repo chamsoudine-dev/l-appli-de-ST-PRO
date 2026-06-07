@@ -94,10 +94,10 @@ function renderOrderCard(order) {
       <div class="order-meta">
         <span class="order-meta-item"><i class="fas fa-calendar-alt"></i> Planifié : ${arrivalDate}</span>
         <span class="order-meta-item"><i class="fas fa-tint"></i> Passage : ${pickupDate}</span>
-        <span class="order-meta-item"><i class="fas fa-seedling"></i> ${articlesCount} formule(s)</span>
+        <span class="order-meta-item"><i class="fas fa-tshirt"></i> ${articlesCount} habit(s)</span>
         ${isUrgent ? '<span class="order-meta-item" style="color:#ff9800"><i class="fas fa-exclamation-circle"></i> Aujourd\'hui !</span>' : ''}
       </div>
-      ${order.delivery ? '<div class="order-delivery-tag"><i class="fas fa-car"></i> Déplacement</div>' : ''}
+      ${order.delivery ? '<div class="order-delivery-tag"><i class="fas fa-truck"></i> Livraison</div>' : ''}
       <div class="order-amount">${total}</div>
     </div>`;
 }
@@ -207,7 +207,7 @@ async function loadDashboard() {
       planningListEl.innerHTML = `
         <div class="empty-state" style="padding:16px">
           <i class="fas fa-calendar-check" style="font-size:24px;color:var(--gold-light)"></i>
-          <p style="font-size:12px">Aucun arrosage planifié cette semaine</p>
+          <p style="font-size:12px">Aucune récupération planifiée cette semaine</p>
         </div>`;
     } else {
       // Regrouper par date
@@ -252,7 +252,7 @@ async function loadDashboard() {
                   <i class="fas fa-map-marker-alt"></i> ${escapeHtml(o._clientAddress || 'Adresse non spécifiée')}
                 </div>
                 <div style="font-size:11px;color:var(--text-muted)">
-                  <i class="fas fa-seedling"></i> ${(o.articles || []).map(a => a.name).join(', ')}
+                  <i class="fas fa-tshirt"></i> ${(o.articles || []).map(a => a.name).join(', ')}
                 </div>
               </div>
               <div style="display:flex;gap:4px" onclick="event.stopPropagation()">
@@ -337,18 +337,18 @@ async function showOrderDetail(orderId) {
 
     <!-- Status -->
     <div class="detail-section">
-      <div class="detail-section-title"><i class="fas fa-info-circle"></i> Statut de l'intervention</div>
+      <div class="detail-section-title"><i class="fas fa-info-circle"></i> Statut du dépôt</div>
       <select class="detail-status-select" id="detail-status-select" onchange="updateOrderStatus(${order.id}, this.value)">
-        <option value="processing" ${order.status === 'processing' ? 'selected' : ''}>🔄 Planifié</option>
-        <option value="ready" ${order.status === 'ready' ? 'selected' : ''}>✅ Arrosé / Terminé</option>
-        <option value="delivered" ${order.status === 'delivered' ? 'selected' : ''}>💵 Facturé / Payé</option>
-        <option value="cancelled" ${order.status === 'cancelled' ? 'selected' : ''}>❌ Annulé / Reporté</option>
+        <option value="processing" ${order.status === 'processing' ? 'selected' : ''}>🔄 En cours</option>
+        <option value="ready" ${order.status === 'ready' ? 'selected' : ''}>✅ Prêt</option>
+        <option value="delivered" ${order.status === 'delivered' ? 'selected' : ''}>💵 Livré / Payé</option>
+        <option value="cancelled" ${order.status === 'cancelled' ? 'selected' : ''}>❌ Annulé</option>
       </select>
     </div>
 
     <!-- Client -->
     <div class="detail-section">
-      <div class="detail-section-title"><i class="fas fa-user"></i> Client & Domicile</div>
+      <div class="detail-section-title"><i class="fas fa-user"></i> Client</div>
       <div class="detail-row"><span class="detail-label">Nom</span><span class="detail-value">${escapeHtml(clientName)}</span></div>
       <div class="detail-row"><span class="detail-label">Téléphone</span><span class="detail-value">${escapeHtml(client.phone || '—')}</span></div>
       <div class="detail-row"><span class="detail-label">Adresse</span><span class="detail-value">${escapeHtml(client.address || '—')}</span></div>
@@ -380,18 +380,18 @@ async function showOrderDetail(orderId) {
     <!-- Dates -->
     <div class="detail-section">
       <div class="detail-section-title"><i class="fas fa-calendar-alt"></i> Planification</div>
-      <div class="detail-row"><span class="detail-label">Date Planification</span><span class="detail-value">${order.arrivalDate ? formatDate(order.arrivalDate) : '—'}</span></div>
-      <div class="detail-row"><span class="detail-label">Date Intervention</span><span class="detail-value" style="color:var(--accent-light)">${order.pickupDate ? formatDate(order.pickupDate) : '—'}</span></div>
-      ${order.delivery ? `<div class="detail-row"><span class="detail-label"><i class="fas fa-car"></i> Déplacement</span><span class="detail-value">${escapeHtml(order.deliveryAddress || 'Adresse du client')}</span></div>` : ''}
+      <div class="detail-row"><span class="detail-label">Date de dépôt</span><span class="detail-value">${order.arrivalDate ? formatDate(order.arrivalDate) : '—'}</span></div>
+      <div class="detail-row"><span class="detail-label">Date de récupération</span><span class="detail-value" style="color:var(--accent-light)">${order.pickupDate ? formatDate(order.pickupDate) : '—'}</span></div>
+      ${order.delivery ? `<div class="detail-row"><span class="detail-label"><i class="fas fa-truck"></i> Livraison</span><span class="detail-value">${escapeHtml(order.deliveryAddress || 'Adresse du client')}</span></div>` : ''}
     </div>
 
     <!-- Prestations -->
     <div class="detail-section">
-      <div class="detail-section-title"><i class="fas fa-seedling"></i> Prestations & Tarifs</div>
+      <div class="detail-section-title"><i class="fas fa-tshirt"></i> Habits & Tarifs</div>
       ${articlesRows}
       <div class="detail-row" style="margin-top:8px"><span class="detail-label">Sous-total</span><span class="detail-value">${formatMoney(order.subtotal || 0, currency)}</span></div>
       ${order.discount > 0 ? `<div class="detail-row"><span class="detail-label" style="color:#ef4444">Remise (${order.discount}%)</span><span class="detail-value" style="color:#ef4444">- ${formatMoney((order.subtotal || 0) * order.discount / 100, currency)}</span></div>` : ''}
-      ${order.deliveryFee > 0 ? `<div class="detail-row"><span class="detail-label">Frais de déplacement</span><span class="detail-value">${formatMoney(order.deliveryFee, currency)}</span></div>` : ''}
+      ${order.deliveryFee > 0 ? `<div class="detail-row"><span class="detail-label">Frais de livraison</span><span class="detail-value">${formatMoney(order.deliveryFee, currency)}</span></div>` : ''}
       <div class="detail-row" style="border-top:2px solid var(--border-color);margin-top:8px;padding-top:8px">
         <span style="font-weight:700">TOTAL</span>
         <span style="font-weight:800;font-size:18px;color:var(--accent-light)">${formatMoney(order.total || 0, currency)}</span>
@@ -407,10 +407,10 @@ async function showOrderDetail(orderId) {
     <!-- Actions -->
     <div class="detail-actions">
       <button class="btn-whatsapp btn-full" onclick="showReceipt(${order.id});closeModal('modal-order-detail')">
-        <i class="fab fa-whatsapp"></i> Voir & Envoyer Devis / Facture
+        <i class="fab fa-whatsapp"></i> Voir & Envoyer le Reçu
       </button>
       <button class="btn-primary btn-full" onclick="editOrder(${order.id})">
-        <i class="fas fa-edit"></i> Modifier l'intervention
+        <i class="fas fa-edit"></i> Modifier le dépôt
       </button>
       <button class="btn-danger btn-full" onclick="confirmDeleteOrder(${order.id})">
         <i class="fas fa-trash"></i> Supprimer
@@ -455,7 +455,7 @@ async function showNewOrder() {
     currentTarifs = DEFAULT_TARIFS.map(t => ({ ...t }));
   }
 
-  document.getElementById('modal-order-title').textContent = 'Planifier une Intervention';
+  document.getElementById('modal-order-title').textContent = 'Enregistrer un Dépôt';
   document.getElementById('order-id').value = '';
   document.getElementById('client-search-input').value = '';
   document.getElementById('client-firstname').value = '';
@@ -499,7 +499,7 @@ async function editOrder(orderId) {
   currentTarifs = await getAllTarifs();
   if (currentTarifs.length === 0) currentTarifs = DEFAULT_TARIFS.map(t => ({ ...t }));
 
-  document.getElementById('modal-order-title').textContent = 'Modifier l\'Intervention';
+  document.getElementById('modal-order-title').textContent = 'Modifier le Dépôt';
   document.getElementById('order-id').value = order.id;
 
   // Client

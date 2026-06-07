@@ -31,14 +31,13 @@ async function checkAndSeedDefaults() {
 
   const bName = await getSetting('businessName');
   if (!bName) {
-    // Données extraites de la fiche de proposition ST-PRO
-    await setSetting('businessName', 'ST-PRO Services Techniques Professionnels');
+    await setSetting('businessName', 'ST-PRO Pressing');
     await setSetting('businessAddress', 'Niamey, Niger');
     await setSetting('businessPhone', '+227 76 75 74 68 / 91 99 04 66');
     await setSetting('businessEmail', 'stpro8481@gmail.com');
     await setSetting('businessNIF', '141576 /P');
     await setSetting('businessRCCM', 'NE/NIM/01/2025/A10/02064');
-    await setSetting('footerMessage', 'ST-PRO — Un cadre vert, propre et harmonieux valorise votre maison.');
+    await setSetting('footerMessage', 'ST-PRO Pressing — Votre linge propre et repassé avec un soin professionnel.');
     await setSetting('currency', 'FCFA');
   }
 
@@ -396,7 +395,7 @@ function confirmClearData() {
 
 function registerServiceWorker() {
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/sw.js').catch(err => {
+    navigator.serviceWorker.register('./sw.js').catch(err => {
       // Optionnel, ne pas bloquer si sw.js non disponible
     });
   }

@@ -1,5 +1,5 @@
 /* ===================================================
-   receipt.js — Génération de reçus professionnels ST-PRO
+   receipt.js — Génération de reçus professionnels ST-PRO Pressing
    =================================================== */
 
 let currentReceiptOrder = null;
@@ -26,7 +26,7 @@ async function showReceipt(orderId) {
   const businessAddress = settings.businessAddress || 'Niamey, Niger';
   const businessPhone = settings.businessPhone || '+227 76 75 74 68 / 91 99 04 66';
   const businessEmail = settings.businessEmail || 'stpro8481@gmail.com';
-  const footerMsg = settings.footerMessage || 'ST-PRO — Un cadre vert, propre et harmonieux valorise votre maison.';
+  const footerMsg = settings.footerMessage || 'ST-PRO Pressing — Votre linge propre et repassé avec un soin professionnel.';
 
   const receiptHTML = buildReceiptHTML(order, client, {
     currency, businessName, businessAddress,
@@ -65,7 +65,7 @@ function buildReceiptHTML(order, client, settings) {
         <td>${escapeHtml(art.name)}</td>
         <td style="text-align:center">${art.qty || 1}</td>
         <td style="text-align:right">${formatMoney(art.price || 0, currency)}</td>
-        <td>${formatMoney(lineTotal, currency)}</td>
+        <td style="text-align:right">${formatMoney(lineTotal, currency)}</td>
       </tr>`;
   });
 
@@ -87,7 +87,7 @@ function buildReceiptHTML(order, client, settings) {
   if (deliveryFee > 0) {
     deliveryRow = `
       <tr>
-        <td colspan="3" style="text-align:right">Frais de déplacement</td>
+        <td colspan="3" style="text-align:right">Frais de livraison</td>
         <td style="text-align:right">${formatMoney(deliveryFee, currency)}</td>
       </tr>`;
   }
@@ -96,7 +96,7 @@ function buildReceiptHTML(order, client, settings) {
   const statusColor = getStatusColor(order.status);
 
   const deliveryBadge = order.delivery
-    ? `<span class="receipt-delivery-badge">🚗 Déplacement : ${escapeHtml(order.deliveryAddress || 'Adresse du client')}</span>`
+    ? `<span class="receipt-delivery-badge">🚗 Livraison : ${escapeHtml(order.deliveryAddress || 'Adresse du client')}</span>`
     : '';
 
   const contactLine = [businessPhone, businessEmail].filter(Boolean).join(' | ');
@@ -104,10 +104,10 @@ function buildReceiptHTML(order, client, settings) {
   return `
     <div class="receipt-paper" id="receipt-to-print">
       <!-- HEADER -->
-      <div class="receipt-header" style="background: linear-gradient(135deg, #1b4332, #0b1a13); color: #fff; padding: 20px; text-align: center;">
-        <div class="receipt-logo-icon" style="font-size:36px;margin-bottom:6px">🌱</div>
-        <div class="receipt-business-name" style="font-size: 24px; font-weight: 800; color: #52b788; letter-spacing: 1px;">${escapeHtml(businessName)}</div>
-        <div class="receipt-business-sub" style="font-size: 11px; color: rgba(255,255,255,0.7); text-transform: uppercase; letter-spacing: 2px;">Entretien d'Espaces Verts & Arrosage</div>
+      <div class="receipt-header" style="background: linear-gradient(135deg, #0284c7, #070e1a); color: #fff; padding: 20px; text-align: center;">
+        <div class="receipt-logo-icon" style="font-size:36px;margin-bottom:6px">🧺</div>
+        <div class="receipt-business-name" style="font-size: 24px; font-weight: 800; color: #38bdf8; letter-spacing: 1px;">${escapeHtml(businessName)}</div>
+        <div class="receipt-business-sub" style="font-size: 11px; color: rgba(255,255,255,0.7); text-transform: uppercase; letter-spacing: 2px;">Pressing &amp; Blanchisserie Professionnelle</div>
         
         <!-- Identifiants ST-PRO -->
         <div style="font-size:9px;color:rgba(255,255,255,0.55);margin-top:6px;font-family:monospace">
@@ -119,8 +119,8 @@ function buildReceiptHTML(order, client, settings) {
       </div>
 
       <!-- REFERENCE BANNER -->
-      <div class="receipt-ref-banner">
-        <span>INTERVENTION N° ${order.ref || '—'}</span>
+      <div class="receipt-ref-banner" style="background: linear-gradient(135deg, #0284c7, #0369a1); padding: 10px 20px; display: flex; justify-content: space-between; align-items: center;">
+        <span>DÉPÔT N° ${order.ref || '—'}</span>
         <span>${createdAt}</span>
         <span style="background:${statusColor};padding:2px 10px;border-radius:20px;font-size:11px">${statusLabel}</span>
       </div>
@@ -130,7 +130,7 @@ function buildReceiptHTML(order, client, settings) {
 
         <!-- Client -->
         <div class="receipt-section">
-          <div class="receipt-section-title">👤 Client & Domicile</div>
+          <div class="receipt-section-title">👤 Client</div>
           <div class="receipt-info-row">
             <span>Nom complet</span>
             <strong>${escapeHtml(clientName)}</strong>
@@ -145,24 +145,24 @@ function buildReceiptHTML(order, client, settings) {
 
         <!-- Planification -->
         <div class="receipt-section">
-          <div class="receipt-section-title">📅 Dates de Passage</div>
+          <div class="receipt-section-title">📅 Dates de passage</div>
           <div class="receipt-info-row">
-            <span>Date Planification</span>
+            <span>Date de Dépôt</span>
             <strong>${arrivalDate}</strong>
           </div>
           <div class="receipt-info-row">
-            <span>Date d'Intervention</span>
+            <span>Date de Récupération</span>
             <strong style="color:var(--accent)">${pickupDate}</strong>
           </div>
         </div>
 
         <!-- Articles (Prestations) -->
         <div class="receipt-section">
-          <div class="receipt-section-title">🌿 Prestations et Formules</div>
+          <div class="receipt-section-title">🧺 Habits et Prestations</div>
           <table class="receipt-table">
             <thead>
               <tr>
-                <th>Prestation</th>
+                <th>Vêtement / Service</th>
                 <th style="text-align:center">Qté</th>
                 <th style="text-align:right">P.U.</th>
                 <th style="text-align:right">Total</th>
@@ -186,7 +186,7 @@ function buildReceiptHTML(order, client, settings) {
 
         ${order.notes ? `
         <div class="receipt-section">
-          <div class="receipt-section-title">📝 Consignes Terrain</div>
+          <div class="receipt-section-title">📝 Consignes de Lavage / Repassage</div>
           <div style="font-size:13px;color:#555;font-style:italic">${escapeHtml(order.notes)}</div>
         </div>` : ''}
 
@@ -194,7 +194,7 @@ function buildReceiptHTML(order, client, settings) {
 
       <!-- FOOTER -->
       <div class="receipt-footer">
-        <div class="receipt-footer-text">Merci de faciliter le passage de nos agents.</div>
+        <div class="receipt-footer-text">Merci de votre confiance !</div>
         <div class="receipt-footer-msg">${escapeHtml(footerMsg)}</div>
         ${businessPhone ? `<div style="font-size:11px;color:#999;margin-top:6px">📞 ${escapeHtml(businessPhone)}</div>` : ''}
       </div>
@@ -235,8 +235,8 @@ async function sendReceiptWhatsApp() {
   ).join('\n');
 
   const displacementInfo = order.delivery
-    ? `🚗 *Déplacement*: ${order.deliveryAddress || 'Adresse client'}`
-    : '🏪 *Intervention sur site principal*';
+    ? `🚗 *Livraison*: ${order.deliveryAddress || 'Adresse client'}`
+    : '🏪 *À récupérer au pressing*';
 
   // Consigne de sécurité en fonction du niveau de risque
   let safetyNotice = '';
@@ -245,25 +245,25 @@ async function sendReceiptWhatsApp() {
   }
 
   const message = `
-🌱 *${businessName} ESPACES VERTS*
+🧺 *${businessName} PRESSING*
 ━━━━━━━━━━━━━━━━━━━
 
-🧾 *DEVIS / FACTURE N° ${order.ref}*
+🧾 *REÇU / FACTURE N° ${order.ref}*
 
 Bonjour *${clientName}* 👋
 
-Voici le récapitulatif de votre intervention d'arrosage / entretien :
+Voici le récapitulatif de votre dépôt de vêtements :
 
-📋 *Prestations programmées :*
+📋 *Habits déposés :*
 ${articles}
 
 💰 *Sous-total :* ${formatMoney(order.subtotal || 0, currency)}
-${order.discount > 0 ? `🏷️ *Remise (${order.discount}%) :* -${formatMoney((order.subtotal || 0) * order.discount / 100, currency)}\n` : ''}${order.deliveryFee > 0 ? `🚗 *Frais de déplacement :* ${formatMoney(order.deliveryFee, currency)}\n` : ''}
+${order.discount > 0 ? `🏷️ *Remise (${order.discount}%) :* -${formatMoney((order.subtotal || 0) * order.discount / 100, currency)}\n` : ''}${order.deliveryFee > 0 ? `🚗 *Frais de livraison :* ${formatMoney(order.deliveryFee, currency)}\n` : ''}
 💵 *TOTAL : ${formatMoney(order.total || 0, currency)}*
 
 ━━━━━━━━━━━━━━━━━━━
-📅 *Planification :* ${order.arrivalDate ? formatDate(order.arrivalDate) : '—'}
-📅 *Date d'intervention :* ${order.pickupDate ? formatDate(order.pickupDate) : '—'}
+📅 *Date de dépôt :* ${order.arrivalDate ? formatDate(order.arrivalDate) : '—'}
+📅 *Date de récupération :* ${order.pickupDate ? formatDate(order.pickupDate) : '—'}
 
 ${displacementInfo}
 ${safetyNotice}
@@ -373,10 +373,10 @@ function formatDateTime(isoStr) {
 
 function getStatusLabel(status) {
   const map = {
-    processing: 'Planifié',
-    ready: 'Arrosé / Terminé',
-    delivered: 'Facturé / Payé',
-    cancelled: 'Annulé / Reporté'
+    processing: 'En cours',
+    ready: 'Prêt à récupérer',
+    delivered: 'Livré & Payé',
+    cancelled: 'Annulé'
   };
   return map[status] || status;
 }
@@ -384,9 +384,9 @@ function getStatusLabel(status) {
 function getStatusColor(status) {
   const map = {
     processing: '#ff9800',
-    ready: '#52b788',
-    delivered: '#2e7d32',
-    cancelled: '#6b8c7e'
+    ready: '#0284c7',
+    delivered: '#10b981',
+    cancelled: '#64748b'
   };
-  return map[status] || '#6b8c7e';
+  return map[status] || '#64748b';
 }
