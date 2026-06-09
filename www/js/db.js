@@ -390,19 +390,18 @@ function clearAllData() {
   });
 }
 
-/* ---- Default Tarifs — ST-PRO Pressing ---- */
+/* ---- Default Tarifs — ST-PRO Jardin & Pots ---- */
 const DEFAULT_TARIFS = [
-  { name: 'Chemise (Lavage + Repassage)', price: 1000 },
-  { name: 'Pantalon (Lavage + Repassage)', price: 1000 },
-  { name: 'Veste / Blouson (Nettoyage à sec)', price: 1500 },
-  { name: 'Costume 2 Pièces (Nettoyage à sec)', price: 2500 },
-  { name: 'Robe Simple (Lavage + Repassage)', price: 1500 },
-  { name: 'Robe de soirée / Pagne (Lavage + Repassage)', price: 2500 },
-  { name: 'Drap de lit 2 places (Lavage)', price: 1500 },
-  { name: 'Couette / Couverture (Lavage)', price: 3000 },
-  { name: 'T-shirt / Polo (Lavage + Repassage)', price: 800 },
-  { name: 'Repassage simple (par habit)', price: 500 },
-  { name: 'Abonnement Mensuel (30 habits)', price: 22000 }
+  { name: 'Arrosage & fertilisation (le passage)', price: 2500 },
+  { name: 'Entretien pelouse (par m²)', price: 500 },
+  { name: 'Taille de haies / arbustes (l\'heure)', price: 3000 },
+  { name: 'Rempotage de pot (petit / moyen)', price: 2000 },
+  { name: 'Rempotage de pot (grand)', price: 4000 },
+  { name: 'Traitement phytosanitaire (par plante)', price: 1500 },
+  { name: 'Désherbage manuel (par m²)', price: 600 },
+  { name: 'Création de parterre fleuri (le m²)', price: 8000 },
+  { name: 'Nettoyage & drainage pot décoratif', price: 1500 },
+  { name: 'Abonnement Entretien Mensuel (4 passages)', price: 20000 }
 ];
 
 /* ---- Helpers dates ---- */

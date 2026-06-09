@@ -6,8 +6,8 @@
   <meta name="theme-color" content="#0284c7" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="description" content="ST-PRO Pressing - Gestion de Pressing et Blanchisserie" />
-  <title>ST-PRO Pressing — Gestion de Pressing</title>
+  <meta name="description" content="ST-PRO Jardin & Pots - Gestion d'Entretien de Jardins et Pots de Fleurs" />
+  <title>ST-PRO Jardin & Pots — Gestion des Interventions</title>
 
   <!-- PWA Manifest -->
   <link rel="manifest" href="manifest.json" />
@@ -39,10 +39,10 @@
   <div id="splash-screen">
     <div class="splash-content">
       <div class="splash-logo">
-        <i class="fas fa-soap"></i>
+        <i class="fas fa-seedling"></i>
       </div>
-      <h1 class="splash-title">ST-PRO Pressing</h1>
-      <p class="splash-subtitle">Soin Professionnel de Votre Linge</p>
+      <h1 class="splash-title">ST-PRO Jardin & Pots</h1>
+      <p class="splash-subtitle">Entretien Professionnel de Vos Plantes & Jardins</p>
       <div class="splash-loader">
         <div class="loader-bar"></div>
       </div>
@@ -60,8 +60,8 @@
           <i class="fas fa-arrow-left"></i>
         </button>
         <div class="header-logo">
-          <i class="fas fa-soap" style="color:var(--gold-light)"></i>
-          <span>ST-PRO Pressing</span>
+          <i class="fas fa-seedling" style="color:var(--gold-light)"></i>
+          <span>ST-PRO Jardin & Pots</span>
         </div>
       </div>
       <div class="header-right">
@@ -92,7 +92,7 @@
               <p class="greeting-date" id="greeting-date"></p>
             </div>
             <div class="greeting-icon">
-              <i class="fas fa-tshirt"></i>
+              <i class="fas fa-seedling"></i>
             </div>
           </div>
 
@@ -118,11 +118,11 @@
             </div>
             <div class="stat-card glass-card" onclick="filterOrders('ready')">
               <div class="stat-icon" style="background: linear-gradient(135deg, #0284c7, #0369a1)">
-                <i class="fas fa-tshirt"></i>
+                <i class="fas fa-leaf"></i>
               </div>
               <div class="stat-info">
                 <span class="stat-value" id="stat-ready">0</span>
-                <span class="stat-label">Prêts</span>
+                <span class="stat-label">Réalisés</span>
               </div>
             </div>
             <div class="stat-card glass-card" onclick="filterOrders('delivered')">
@@ -131,7 +131,7 @@
               </div>
               <div class="stat-info">
                 <span class="stat-value" id="stat-delivered">0</span>
-                <span class="stat-label">Livrés</span>
+                <span class="stat-label">Payés</span>
               </div>
             </div>
           </div>
@@ -162,19 +162,19 @@
             </div>
           </div>
 
-          <!-- Alert: Récupérations aujourd'hui -->
+          <!-- Alert: Passages d'entretien aujourd'hui -->
           <div id="alert-today" class="alert-card glass-card hidden">
             <i class="fas fa-exclamation-triangle alert-icon"></i>
             <div class="alert-text">
-              <strong id="alert-count">0</strong> vêtement(s) à récupérer aujourd'hui !
+              <strong id="alert-count">0</strong> passage(s) d'entretien prévu(s) aujourd'hui !
             </div>
           </div>
 
           <!-- Section: Planning d'arrosage de la semaine -->
           <div class="planning-section">
             <div class="section-header">
-              <h3>Récupérations prévues &amp; Rappels</h3>
-              <button class="btn-link" onclick="showPage('orders')">Tous les dépôts</button>
+              <h3>Passages prévus &amp; Rappels</h3>
+              <button class="btn-link" onclick="showPage('orders')">Toutes les interventions</button>
             </div>
             <div id="weekly-planning-list" class="planning-list">
               <!-- Rempli dynamiquement en JS -->
@@ -183,14 +183,14 @@
 
           <!-- Recent Orders -->
           <div class="section-header">
-            <h3>Dépôts récents</h3>
+            <h3>Interventions récentes</h3>
           </div>
  
           <div id="recent-orders-list" class="orders-list">
             <div class="empty-state">
-              <i class="fas fa-tshirt"></i>
-              <p>Aucun dépôt planifié</p>
-              <button class="btn-primary" onclick="showNewOrder()">Nouveau dépôt de linge</button>
+              <i class="fas fa-leaf"></i>
+              <p>Aucune intervention planifiée</p>
+              <button class="btn-primary" onclick="showNewOrder()">Nouveau passage d'entretien</button>
             </div>
           </div>
 
@@ -201,22 +201,22 @@
       <section id="page-orders" class="page">
         <div class="page-content">
           <div class="page-header">
-            <h2>Dépôts de linge</h2>
+            <h2>Interventions d'entretien</h2>
             <button class="btn-primary btn-sm" onclick="showNewOrder()">
-              <i class="fas fa-plus"></i> Nouveau dépôt
+              <i class="fas fa-plus"></i> Nouveau passage
             </button>
           </div>
 
           <!-- Search & Filter -->
           <div class="search-bar">
             <i class="fas fa-search"></i>
-            <input type="text" id="orders-search" placeholder="Rechercher un dépôt..." oninput="searchOrders(this.value)" />
+            <input type="text" id="orders-search" placeholder="Rechercher une intervention..." oninput="searchOrders(this.value)" />
           </div>
           <div class="filter-tabs" id="orders-filter-tabs">
             <button class="filter-tab active" data-status="all" onclick="filterOrders('all', this)">Tous</button>
             <button class="filter-tab" data-status="processing" onclick="filterOrders('processing', this)">En cours</button>
-            <button class="filter-tab" data-status="ready" onclick="filterOrders('ready', this)">Prêts</button>
-            <button class="filter-tab" data-status="delivered" onclick="filterOrders('delivered', this)">Livrés</button>
+            <button class="filter-tab" data-status="ready" onclick="filterOrders('ready', this)">Réalisés</button>
+            <button class="filter-tab" data-status="delivered" onclick="filterOrders('delivered', this)">Payés</button>
           </div>
 
           <div id="orders-list" class="orders-list"></div>
@@ -237,8 +237,8 @@
           <div class="contract-info-banner glass-card">
             <i class="fas fa-info-circle" style="color:var(--gold-light);font-size:18px;flex-shrink:0"></i>
             <div>
-              <div style="font-size:12px;font-weight:600;color:var(--gold-light)">Abonnements Pressing</div>
-              <div style="font-size:11px;color:var(--text-muted)">Planifiez plusieurs semaines / mois de dépôts de linge pour un client récurrent.</div>
+              <div style="font-size:12px;font-weight:600;color:var(--gold-light)">Abonnements Jardins & Pots</div>
+              <div style="font-size:11px;color:var(--text-muted)">Planifiez plusieurs semaines / mois d'entretien pour un client récurrent.</div>
             </div>
           </div>
 
@@ -289,7 +289,7 @@
               <span class="revenue-amount" id="hist-revenue">0 FCFA</span>
             </div>
             <div class="revenue-right">
-              <span class="revenue-label">Dépôts</span>
+              <span class="revenue-label">Interventions</span>
               <span class="revenue-today" id="hist-count">0</span>
             </div>
           </div>
@@ -314,7 +314,7 @@
             
             <div class="filter-tabs" id="map-filter-tabs" style="margin-bottom:0; overflow:hidden">
               <button class="filter-tab active" id="btn-map-filter-all" onclick="filterMapMarkers('all')">Tous les clients</button>
-              <button class="filter-tab" id="btn-map-filter-today" onclick="filterMapMarkers('today')">Livr./Récup. aujourd'hui</button>
+              <button class="filter-tab" id="btn-map-filter-today" onclick="filterMapMarkers('today')">Passages aujourd'hui</button>
             </div>
           </div>
 
@@ -331,7 +331,7 @@
           </div>
 
           <div class="settings-form glass-card">
-            <h3 class="settings-section-title"><i class="fas fa-soap"></i> Configuration ST-PRO Pressing</h3>
+            <h3 class="settings-section-title"><i class="fas fa-seedling"></i> Configuration ST-PRO Jardin & Pots</h3>
             <div class="form-group">
               <label>Nom de l'entreprise</label>
               <input type="text" id="set-name" placeholder="ST-PRO Services Techniques Professionnels" />
@@ -379,7 +379,7 @@
           </div>
 
           <div class="settings-form glass-card" style="margin-top:16px">
-            <h3 class="settings-section-title"><i class="fas fa-tshirt"></i> Tarifs des prestations (habits)</h3>
+            <h3 class="settings-section-title"><i class="fas fa-leaf"></i> Tarifs des prestations (jardinage)</h3>
             <div id="tarifs-list"></div>
             <button class="btn-secondary btn-full" onclick="addTarifRow()">
               <i class="fas fa-plus"></i> Ajouter un article/tarif
@@ -397,8 +397,8 @@
           </div>
           <!-- Badge version -->
           <div style="text-align:center; padding: 16px 0 4px; color:var(--text-muted); font-size:11px; letter-spacing:1px;">
-            <i class="fas fa-soap" style="color:var(--gold-light); margin-right:4px;"></i>
-            ST-PRO Pressing &nbsp;·&nbsp; Version 1.1.0
+            <i class="fas fa-seedling" style="color:var(--gold-light); margin-right:4px;"></i>
+            ST-PRO Jardin &amp; Pots &nbsp;·&nbsp; Version 1.1.0
           </div>
         </div>
       </section>
@@ -412,12 +412,12 @@
         <span>Accueil</span>
       </button>
       <button class="nav-item" data-page="orders" onclick="showPage('orders', this)">
-        <i class="fas fa-tshirt"></i>
-        <span>Dépôts</span>
+        <i class="fas fa-calendar-check"></i>
+        <span>Passages</span>
       </button>
       <div class="nav-fab-wrapper">
-        <button class="nav-fab" onclick="showNewOrder()" title="Nouveau dépôt de linge">
-          <i class="fas fa-soap"></i>
+        <button class="nav-fab" onclick="showNewOrder()" title="Nouveau passage d'entretien">
+          <i class="fas fa-seedling"></i>
         </button>
       </div>
       <button class="nav-item" data-page="contracts" onclick="showPage('contracts', this)">
@@ -436,10 +436,10 @@
   <!-- Modal Overlay -->
   <div id="modal-overlay" class="modal-overlay" onclick="closeAllModals()"></div>
 
-  <!-- Modal: Nouvelle / Modifier Commande (Dépôt) -->
+  <!-- Modal: Nouvelle / Modifier Intervention -->
   <div id="modal-order" class="modal modal-full">
     <div class="modal-header">
-      <h3 id="modal-order-title">Enregistrer un Dépôt</h3>
+      <h3 id="modal-order-title">Enregistrer une Intervention</h3>
       <button class="btn-icon" onclick="closeModal('modal-order')">
         <i class="fas fa-times"></i>
       </button>
@@ -504,14 +504,14 @@
       </div>
 
 
-      <!-- Articles (Habits/Services) -->
+      <!-- Articles (Prestations/Services) -->
       <div class="form-section">
-        <h4 class="form-section-title"><i class="fas fa-tshirt"></i> Habits &amp; Prestations</h4>
+        <h4 class="form-section-title"><i class="fas fa-seedling"></i> Prestations & Services</h4>
         <div id="articles-list">
           <!-- Rows dynamiques -->
         </div>
         <button class="btn-secondary btn-full" onclick="addArticleRow()" style="margin-top:8px">
-          <i class="fas fa-plus"></i> Ajouter un vêtement
+          <i class="fas fa-plus"></i> Ajouter une prestation
         </button>
       </div>
 
@@ -531,41 +531,22 @@
         </div>
       </div>
 
-      <!-- Dates & Livraison -->
+      <!-- Dates & Planification -->
       <div class="form-section">
-        <h4 class="form-section-title"><i class="fas fa-calendar-alt"></i> Planification &amp; Livraison</h4>
+        <h4 class="form-section-title"><i class="fas fa-calendar-alt"></i> Planification & Intervention</h4>
         <div class="form-row">
           <div class="form-group">
-            <label>Date de dépôt *</label>
+            <label>Date de planification *</label>
             <input type="date" id="order-arrival" />
           </div>
           <div class="form-group">
-            <label>Date de récupération *</label>
+            <label>Date d'intervention *</label>
             <input type="date" id="order-pickup" />
           </div>
         </div>
         <div class="form-group">
-          <label class="toggle-label">
-            <span><i class="fas fa-truck"></i> Option de Livraison</span>
-            <label class="toggle-switch">
-              <input type="checkbox" id="order-delivery" onchange="toggleDelivery(this)" />
-              <span class="toggle-slider"></span>
-            </label>
-          </label>
-        </div>
-        <div id="delivery-address-wrap" class="hidden">
-          <div class="form-group">
-            <label>Adresse de livraison (si différente)</label>
-            <input type="text" id="order-delivery-address" placeholder="Quartier, Rue..." />
-          </div>
-          <div class="form-group">
-            <label>Frais de livraison</label>
-            <input type="number" id="order-delivery-fee" placeholder="0" value="0" oninput="recalcTotal()" />
-          </div>
-        </div>
-        <div class="form-group">
-          <label>Consignes de lavage / Repassage</label>
-          <textarea id="order-notes" rows="2" placeholder="Lavage délicat, repassage amidonné, taches difficiles, etc."></textarea>
+          <label>Consignes d'entretien</label>
+          <textarea id="order-notes" rows="2" placeholder="Arrosage spécial, taille délicate, traitement phytosanitaire, etc."></textarea>
         </div>
       </div>
 
@@ -660,16 +641,16 @@
         <div class="form-group">
           <label>Formule d'Abonnement</label>
           <select id="edit-client-frequency">
-            <option value="basique">Formule Standard (au vêtement)</option>
+             <option value="basique">Formule Standard (au passage)</option>
             <option value="standard">Abonnement Mensuel Express</option>
             <option value="premium">Formule Premium (Sur Devis)</option>
-            <option value="hebdo">Hebdomadaire (Ramassage & Lavage)</option>
+            <option value="hebdo">Hebdomadaire (Arrosage &amp; Entretien)</option>
             <option value="custom">Autre / Personnalisé</option>
           </select>
         </div>
         <div class="form-group">
-          <label>Préférences de lavage</label>
-          <input type="text" id="edit-client-plants" placeholder="Ex: Assouplissant sans odeur, pas d'amidon..." />
+          <label>Consignes d'entretien</label>
+          <input type="text" id="edit-client-plants" placeholder="Ex: Arrosage abondant, pas d'engrais azoté, taille légère..." />
         </div>
       </div>
       <div class="form-actions">
@@ -681,10 +662,10 @@
     </div>
   </div>
 
-  <!-- Modal: Détail Commande (Dépôt) -->
+  <!-- Modal: Détail Intervention -->
   <div id="modal-order-detail" class="modal modal-full">
     <div class="modal-header">
-      <h3>Détail du Dépôt</h3>
+      <h3>Détail de l'Intervention</h3>
       <button class="btn-icon" onclick="closeModal('modal-order-detail')">
         <i class="fas fa-times"></i>
       </button>
@@ -762,7 +743,7 @@
 
       <!-- Prestations -->
       <div class="form-section">
-        <h4 class="form-section-title"><i class="fas fa-tshirt"></i> Prestations de l'abonnement</h4>
+        <h4 class="form-section-title"><i class="fas fa-leaf"></i> Prestations de l'abonnement</h4>
         <div id="contract-articles-list"></div>
         <button class="btn-secondary btn-full" onclick="addContractArticleRow()" style="margin-top:8px">
           <i class="fas fa-plus"></i> Ajouter un article
@@ -917,7 +898,8 @@
   </div>
 
   <!-- Scripts -->
-  <script src="cordova.js"></script>
+  <!-- cordova.js : décommentez uniquement si l'app est packagée avec Apache Cordova/Capacitor -->
+  <!-- <script src="cordova.js"></script> -->
   <script src="js/db.js"></script>
   <script src="js/receipt.js"></script>
   <script src="js/orders.js"></script>

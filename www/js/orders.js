@@ -93,11 +93,10 @@ function renderOrderCard(order) {
       <div class="order-client">${escapeHtml(clientName)} ${riskBadge}</div>
       <div class="order-meta">
         <span class="order-meta-item"><i class="fas fa-calendar-alt"></i> Planifié : ${arrivalDate}</span>
-        <span class="order-meta-item"><i class="fas fa-tint"></i> Passage : ${pickupDate}</span>
-        <span class="order-meta-item"><i class="fas fa-tshirt"></i> ${articlesCount} habit(s)</span>
+        <span class="order-meta-item"><i class="fas fa-leaf"></i> Passage : ${pickupDate}</span>
+        <span class="order-meta-item"><i class="fas fa-seedling"></i> ${articlesCount} prestation(s)</span>
         ${isUrgent ? '<span class="order-meta-item" style="color:#ff9800"><i class="fas fa-exclamation-circle"></i> Aujourd\'hui !</span>' : ''}
       </div>
-      ${order.delivery ? '<div class="order-delivery-tag"><i class="fas fa-truck"></i> Livraison</div>' : ''}
       <div class="order-amount">${total}</div>
     </div>`;
 }
@@ -252,7 +251,7 @@ async function loadDashboard() {
                   <i class="fas fa-map-marker-alt"></i> ${escapeHtml(o._clientAddress || 'Adresse non spécifiée')}
                 </div>
                 <div style="font-size:11px;color:var(--text-muted)">
-                  <i class="fas fa-tshirt"></i> ${(o.articles || []).map(a => a.name).join(', ')}
+                  <i class="fas fa-seedling"></i> ${(o.articles || []).map(a => a.name).join(', ')}
                 </div>
               </div>
               <div style="display:flex;gap:4px" onclick="event.stopPropagation()">
@@ -337,11 +336,11 @@ async function showOrderDetail(orderId) {
 
     <!-- Status -->
     <div class="detail-section">
-      <div class="detail-section-title"><i class="fas fa-info-circle"></i> Statut du dépôt</div>
+      <div class="detail-section-title"><i class="fas fa-info-circle"></i> Statut de l'intervention</div>
       <select class="detail-status-select" id="detail-status-select" onchange="updateOrderStatus(${order.id}, this.value)">
         <option value="processing" ${order.status === 'processing' ? 'selected' : ''}>🔄 En cours</option>
-        <option value="ready" ${order.status === 'ready' ? 'selected' : ''}>✅ Prêt</option>
-        <option value="delivered" ${order.status === 'delivered' ? 'selected' : ''}>💵 Livré / Payé</option>
+        <option value="ready" ${order.status === 'ready' ? 'selected' : ''}>✅ Réalisé</option>
+        <option value="delivered" ${order.status === 'delivered' ? 'selected' : ''}>💵 Payé</option>
         <option value="cancelled" ${order.status === 'cancelled' ? 'selected' : ''}>❌ Annulé</option>
       </select>
     </div>
@@ -380,18 +379,16 @@ async function showOrderDetail(orderId) {
     <!-- Dates -->
     <div class="detail-section">
       <div class="detail-section-title"><i class="fas fa-calendar-alt"></i> Planification</div>
-      <div class="detail-row"><span class="detail-label">Date de dépôt</span><span class="detail-value">${order.arrivalDate ? formatDate(order.arrivalDate) : '—'}</span></div>
-      <div class="detail-row"><span class="detail-label">Date de récupération</span><span class="detail-value" style="color:var(--accent-light)">${order.pickupDate ? formatDate(order.pickupDate) : '—'}</span></div>
-      ${order.delivery ? `<div class="detail-row"><span class="detail-label"><i class="fas fa-truck"></i> Livraison</span><span class="detail-value">${escapeHtml(order.deliveryAddress || 'Adresse du client')}</span></div>` : ''}
+      <div class="detail-row"><span class="detail-label">Date de planification</span><span class="detail-value">${order.arrivalDate ? formatDate(order.arrivalDate) : '—'}</span></div>
+      <div class="detail-row"><span class="detail-label">Date d'intervention</span><span class="detail-value" style="color:var(--accent-light)">${order.pickupDate ? formatDate(order.pickupDate) : '—'}</span></div>
     </div>
 
     <!-- Prestations -->
     <div class="detail-section">
-      <div class="detail-section-title"><i class="fas fa-tshirt"></i> Habits & Tarifs</div>
+      <div class="detail-section-title"><i class="fas fa-seedling"></i> Prestations & Tarifs</div>
       ${articlesRows}
       <div class="detail-row" style="margin-top:8px"><span class="detail-label">Sous-total</span><span class="detail-value">${formatMoney(order.subtotal || 0, currency)}</span></div>
       ${order.discount > 0 ? `<div class="detail-row"><span class="detail-label" style="color:#ef4444">Remise (${order.discount}%)</span><span class="detail-value" style="color:#ef4444">- ${formatMoney((order.subtotal || 0) * order.discount / 100, currency)}</span></div>` : ''}
-      ${order.deliveryFee > 0 ? `<div class="detail-row"><span class="detail-label">Frais de livraison</span><span class="detail-value">${formatMoney(order.deliveryFee, currency)}</span></div>` : ''}
       <div class="detail-row" style="border-top:2px solid var(--border-color);margin-top:8px;padding-top:8px">
         <span style="font-weight:700">TOTAL</span>
         <span style="font-weight:800;font-size:18px;color:var(--accent-light)">${formatMoney(order.total || 0, currency)}</span>
@@ -410,7 +407,7 @@ async function showOrderDetail(orderId) {
         <i class="fab fa-whatsapp"></i> Voir & Envoyer le Reçu
       </button>
       <button class="btn-primary btn-full" onclick="editOrder(${order.id})">
-        <i class="fas fa-edit"></i> Modifier le dépôt
+        <i class="fas fa-edit"></i> Modifier l'intervention
       </button>
       <button class="btn-danger btn-full" onclick="confirmDeleteOrder(${order.id})">
         <i class="fas fa-trash"></i> Supprimer
@@ -455,7 +452,7 @@ async function showNewOrder() {
     currentTarifs = DEFAULT_TARIFS.map(t => ({ ...t }));
   }
 
-  document.getElementById('modal-order-title').textContent = 'Enregistrer un Dépôt';
+  document.getElementById('modal-order-title').textContent = 'Enregistrer une Intervention';
   document.getElementById('order-id').value = '';
   document.getElementById('client-search-input').value = '';
   document.getElementById('client-firstname').value = '';
@@ -463,10 +460,7 @@ async function showNewOrder() {
   document.getElementById('client-phone').value = '';
   document.getElementById('order-discount').value = '0';
   document.getElementById('order-notes').value = '';
-  document.getElementById('order-delivery').checked = false;
-  document.getElementById('delivery-address-wrap').classList.add('hidden');
-  document.getElementById('order-delivery-address').value = '';
-  document.getElementById('order-delivery-fee').value = '0';
+
 
   // Dates par défaut (aujourd'hui pour les deux car l'arrosage se fait le jour même)
   const today = new Date().toISOString().split('T')[0];
@@ -499,7 +493,7 @@ async function editOrder(orderId) {
   currentTarifs = await getAllTarifs();
   if (currentTarifs.length === 0) currentTarifs = DEFAULT_TARIFS.map(t => ({ ...t }));
 
-  document.getElementById('modal-order-title').textContent = 'Modifier le Dépôt';
+  document.getElementById('modal-order-title').textContent = 'Modifier l\'Intervention';
   document.getElementById('order-id').value = order.id;
 
   // Client
@@ -531,15 +525,6 @@ async function editOrder(orderId) {
   document.getElementById('order-pickup').value = order.pickupDate || '';
 
 
-  // Déplacement
-  document.getElementById('order-delivery').checked = !!order.delivery;
-  if (order.delivery) {
-    document.getElementById('delivery-address-wrap').classList.remove('hidden');
-    document.getElementById('order-delivery-address').value = order.deliveryAddress || '';
-    document.getElementById('order-delivery-fee').value = order.deliveryFee || 0;
-  } else {
-    document.getElementById('delivery-address-wrap').classList.add('hidden');
-  }
 
   // Notes
   document.getElementById('order-notes').value = order.notes || '';
@@ -707,26 +692,16 @@ function recalcTotal() {
   const articles = getArticles();
   const subtotal = articles.reduce((sum, a) => sum + (a.qty * a.price), 0);
   const discount = parseFloat(document.getElementById('order-discount').value) || 0;
-  const deliveryFee = parseFloat(document.getElementById('order-delivery-fee')?.value) || 0;
 
   const discountAmt = subtotal * discount / 100;
-  const total = subtotal - discountAmt + deliveryFee;
+  const total = subtotal - discountAmt;
 
   const currency = window._currency || 'FCFA';
   document.getElementById('order-subtotal').textContent = formatMoney(subtotal, currency);
   document.getElementById('order-total').textContent = formatMoney(total, currency);
 }
 
-function toggleDelivery(checkbox) {
-  const wrap = document.getElementById('delivery-address-wrap');
-  if (checkbox.checked) {
-    wrap.classList.remove('hidden');
-  } else {
-    wrap.classList.add('hidden');
-    document.getElementById('order-delivery-fee').value = 0;
-    recalcTotal();
-  }
-}
+
 
 /* ===================== RECHERCHE CLIENT DANS COMMANDE ===================== */
 
@@ -814,11 +789,8 @@ async function saveOrder() {
 
   const subtotal = articles.reduce((sum, a) => sum + (a.qty * a.price), 0);
   const discount = parseFloat(document.getElementById('order-discount').value) || 0;
-  const deliveryFee = parseFloat(document.getElementById('order-delivery-fee')?.value) || 0;
-  const total = subtotal - (subtotal * discount / 100) + deliveryFee;
+  const total = subtotal - (subtotal * discount / 100);
 
-  const delivery = document.getElementById('order-delivery').checked;
-  const deliveryAddress = document.getElementById('order-delivery-address').value.trim();
   const notes = document.getElementById('order-notes').value.trim();
 
   let clientId = null;
@@ -867,16 +839,12 @@ async function saveOrder() {
   const orderData = {
     clientId,
     clientSnapshot,
-
     articles,
     subtotal,
     discount,
-    deliveryFee,
     total,
     arrivalDate,
     pickupDate,
-    delivery,
-    deliveryAddress: delivery ? deliveryAddress : '',
     notes,
     status: 'processing'
   };
@@ -1803,8 +1771,6 @@ async function saveContract() {
       total: pricePerIntervention,
       arrivalDate: date,
       pickupDate: date,
-      delivery: false,
-      deliveryAddress: '',
       notes,
       status: 'processing',
       contractId

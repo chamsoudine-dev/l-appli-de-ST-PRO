@@ -1,9 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.stpro.pressing" version="1.1.0" android-versionCode="2" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
-    <name>ST-PRO Pressing</name>
-    <description>
-        ST-PRO Pressing — Gestion de Pressing et Blanchisserie.
-    </description>
+<widget id="com.stpro.jardinpots" version="1.1.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+    <name>ST-PRO Jardin &amp; Pots</name>
+    <description>Application de gestion des interventions d'entretien de jardins et pots de fleurs - ST-PRO Niamey Niger</description>
     <author email="stpro8481@gmail.com" href="mailto:stpro8481@gmail.com">
         ST-PRO Services Techniques Professionnels
     </author>

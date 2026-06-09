@@ -31,13 +31,13 @@ async function checkAndSeedDefaults() {
 
   const bName = await getSetting('businessName');
   if (!bName) {
-    await setSetting('businessName', 'ST-PRO Pressing');
+    await setSetting('businessName', 'ST-PRO Jardin & Pots');
     await setSetting('businessAddress', 'Niamey, Niger');
     await setSetting('businessPhone', '+227 76 75 74 68 / 91 99 04 66');
     await setSetting('businessEmail', 'stpro8481@gmail.com');
     await setSetting('businessNIF', '141576 /P');
     await setSetting('businessRCCM', 'NE/NIM/01/2025/A10/02064');
-    await setSetting('footerMessage', 'ST-PRO Pressing — Votre linge propre et repassé avec un soin professionnel.');
+    await setSetting('footerMessage', 'ST-PRO — Un cadre vert, propre et harmonieux valorise votre maison.');
     await setSetting('currency', 'FCFA');
   }
 

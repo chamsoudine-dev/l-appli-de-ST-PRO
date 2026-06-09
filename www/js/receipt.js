@@ -1,5 +1,5 @@
 /* ===================================================
-   receipt.js — Génération de reçus professionnels ST-PRO Pressing
+   receipt.js — Génération de reçus professionnels ST-PRO Jardin & Pots
    =================================================== */
 
 let currentReceiptOrder = null;
@@ -26,7 +26,7 @@ async function showReceipt(orderId) {
   const businessAddress = settings.businessAddress || 'Niamey, Niger';
   const businessPhone = settings.businessPhone || '+227 76 75 74 68 / 91 99 04 66';
   const businessEmail = settings.businessEmail || 'stpro8481@gmail.com';
-  const footerMsg = settings.footerMessage || 'ST-PRO Pressing — Votre linge propre et repassé avec un soin professionnel.';
+  const footerMsg = settings.footerMessage || 'ST-PRO — Un cadre vert, propre et harmonieux valorise votre maison.';
 
   const receiptHTML = buildReceiptHTML(order, client, {
     currency, businessName, businessAddress,
@@ -87,7 +87,7 @@ function buildReceiptHTML(order, client, settings) {
   if (deliveryFee > 0) {
     deliveryRow = `
       <tr>
-        <td colspan="3" style="text-align:right">Frais de livraison</td>
+        <td colspan="3" style="text-align:right">Frais de déplacement</td>
         <td style="text-align:right">${formatMoney(deliveryFee, currency)}</td>
       </tr>`;
   }
@@ -96,7 +96,7 @@ function buildReceiptHTML(order, client, settings) {
   const statusColor = getStatusColor(order.status);
 
   const deliveryBadge = order.delivery
-    ? `<span class="receipt-delivery-badge">🚗 Livraison : ${escapeHtml(order.deliveryAddress || 'Adresse du client')}</span>`
+    ? `<span class="receipt-delivery-badge">🌿 Intervention à domicile : ${escapeHtml(order.deliveryAddress || 'Adresse du client')}</span>`
     : '';
 
   const contactLine = [businessPhone, businessEmail].filter(Boolean).join(' | ');
@@ -105,9 +105,9 @@ function buildReceiptHTML(order, client, settings) {
     <div class="receipt-paper" id="receipt-to-print">
       <!-- HEADER -->
       <div class="receipt-header" style="background: linear-gradient(135deg, #0284c7, #070e1a); color: #fff; padding: 20px; text-align: center;">
-        <div class="receipt-logo-icon" style="font-size:36px;margin-bottom:6px">🧺</div>
+        <div class="receipt-logo-icon" style="font-size:36px;margin-bottom:6px">🌿</div>
         <div class="receipt-business-name" style="font-size: 24px; font-weight: 800; color: #38bdf8; letter-spacing: 1px;">${escapeHtml(businessName)}</div>
-        <div class="receipt-business-sub" style="font-size: 11px; color: rgba(255,255,255,0.7); text-transform: uppercase; letter-spacing: 2px;">Pressing &amp; Blanchisserie Professionnelle</div>
+        <div class="receipt-business-sub" style="font-size: 11px; color: rgba(255,255,255,0.7); text-transform: uppercase; letter-spacing: 2px;">Entretien Professionnel de Jardins &amp; Pots</div>
         
         <!-- Identifiants ST-PRO -->
         <div style="font-size:9px;color:rgba(255,255,255,0.55);margin-top:6px;font-family:monospace">
@@ -120,7 +120,7 @@ function buildReceiptHTML(order, client, settings) {
 
       <!-- REFERENCE BANNER -->
       <div class="receipt-ref-banner" style="background: linear-gradient(135deg, #0284c7, #0369a1); padding: 10px 20px; display: flex; justify-content: space-between; align-items: center;">
-        <span>DÉPÔT N° ${order.ref || '—'}</span>
+        <span>INTERVENTION N° ${order.ref || '—'}</span>
         <span>${createdAt}</span>
         <span style="background:${statusColor};padding:2px 10px;border-radius:20px;font-size:11px">${statusLabel}</span>
       </div>
@@ -145,24 +145,24 @@ function buildReceiptHTML(order, client, settings) {
 
         <!-- Planification -->
         <div class="receipt-section">
-          <div class="receipt-section-title">📅 Dates de passage</div>
+          <div class="receipt-section-title">📅 Dates d'intervention</div>
           <div class="receipt-info-row">
-            <span>Date de Dépôt</span>
+            <span>Date de planification</span>
             <strong>${arrivalDate}</strong>
           </div>
           <div class="receipt-info-row">
-            <span>Date de Récupération</span>
+            <span>Date d'intervention</span>
             <strong style="color:var(--accent)">${pickupDate}</strong>
           </div>
         </div>
 
         <!-- Articles (Prestations) -->
         <div class="receipt-section">
-          <div class="receipt-section-title">🧺 Habits et Prestations</div>
+          <div class="receipt-section-title">🌿 Prestations & Services</div>
           <table class="receipt-table">
             <thead>
               <tr>
-                <th>Vêtement / Service</th>
+                <th>Prestation / Service</th>
                 <th style="text-align:center">Qté</th>
                 <th style="text-align:right">P.U.</th>
                 <th style="text-align:right">Total</th>
@@ -186,7 +186,7 @@ function buildReceiptHTML(order, client, settings) {
 
         ${order.notes ? `
         <div class="receipt-section">
-          <div class="receipt-section-title">📝 Consignes de Lavage / Repassage</div>
+          <div class="receipt-section-title">📝 Consignes d'entretien</div>
           <div style="font-size:13px;color:#555;font-style:italic">${escapeHtml(order.notes)}</div>
         </div>` : ''}
 
@@ -229,61 +229,107 @@ async function sendReceiptWhatsApp() {
     return;
   }
 
-  // Prestations formatées
-  const articles = (order.articles || []).map(a =>
-    `  • ${a.name} x${a.qty || 1} → ${formatMoney((a.qty || 1) * (a.price || 0), currency)}`
-  ).join('\n');
-
-  const displacementInfo = order.delivery
-    ? `🚗 *Livraison*: ${order.deliveryAddress || 'Adresse client'}`
-    : '🏪 *À récupérer au pressing*';
-
-  // Consigne de sécurité en fonction du niveau de risque
-  let safetyNotice = '';
-  if (client.riskLevel === 'high') {
-    safetyNotice = `\n⚠️ *CONSIGNE DE SÉCURITÉ* : Notre équipe intervenant dans une zone signalée à haut risque, merci de bien vouloir libérer les accès et sécuriser les abords pour le bon déroulement de l'intervention.`;
+  const receiptEl = document.getElementById('receipt-to-print');
+  if (!receiptEl) {
+    showToast('Impossible de trouver le reçu à capturer', 'error');
+    return;
   }
 
-  const message = `
-🧺 *${businessName} PRESSING*
+  showToast('Génération de l\'image du reçu...', 'info');
+
+  try {
+    // Rendre l'élément HTML en image canvas
+    const canvas = await html2canvas(receiptEl, {
+      useCORS: true,
+      scale: 2, // Augmente la résolution pour plus de netteté
+      backgroundColor: '#ffffff',
+      logging: false
+    });
+
+    canvas.toBlob(async (blob) => {
+      if (!blob) {
+        showToast('Erreur lors de la création de l\'image', 'error');
+        return;
+      }
+
+      const fileName = `Recu-${order.ref || order.id}.png`;
+      const file = new File([blob], fileName, { type: 'image/png' });
+
+      // 1. Essayer l'API de partage Web Share (principalement sur mobile)
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        try {
+          await navigator.share({
+            files: [file],
+            title: `Reçu ${order.ref}`,
+            text: `Bonjour ${clientName}, voici le reçu pour l'intervention ${order.ref}.`
+          });
+          showToast('Reçu envoyé avec succès !');
+          return;
+        } catch (shareErr) {
+          console.log('Partage direct annulé ou non pris en charge:', shareErr);
+          // Continuer vers la méthode de secours
+        }
+      }
+
+      // 2. Méthode de secours : Copier dans le presse-papiers + Téléchargement + WhatsApp
+      let copiedToClipboard = false;
+      if (navigator.clipboard && navigator.clipboard.write) {
+        try {
+          const clipboardItem = new ClipboardItem({ 'image/png': blob });
+          await navigator.clipboard.write([clipboardItem]);
+          copiedToClipboard = true;
+        } catch (clipErr) {
+          console.warn('Impossible de copier dans le presse-papiers:', clipErr);
+        }
+      }
+
+      // Déclencher le téléchargement automatique du fichier image
+      const downloadUrl = URL.createObjectURL(blob);
+      const downloadLink = document.createElement('a');
+      downloadLink.href = downloadUrl;
+      downloadLink.download = fileName;
+      document.body.appendChild(downloadLink);
+      downloadLink.click();
+      document.body.removeChild(downloadLink);
+      setTimeout(() => URL.revokeObjectURL(downloadUrl), 5000);
+
+      // Préparer le message WhatsApp d'accompagnement
+      const message = `
+🌿 *${businessName} JARDIN & POTS*
 ━━━━━━━━━━━━━━━━━━━
-
-🧾 *REÇU / FACTURE N° ${order.ref}*
-
 Bonjour *${clientName}* 👋
 
-Voici le récapitulatif de votre dépôt de vêtements :
+Voici le reçu de votre intervention *N° ${order.ref}*.
 
-📋 *Habits déposés :*
-${articles}
+${copiedToClipboard ? '📋 *L\'image du reçu a été copiée dans votre presse-papiers.* Vous pouvez la coller directement ici (Ctrl+V ou appui long > Coller).' : '💾 *L\'image du reçu a été téléchargée sur votre appareil.* Vous pouvez la joindre à cette discussion.'}
 
-💰 *Sous-total :* ${formatMoney(order.subtotal || 0, currency)}
-${order.discount > 0 ? `🏷️ *Remise (${order.discount}%) :* -${formatMoney((order.subtotal || 0) * order.discount / 100, currency)}\n` : ''}${order.deliveryFee > 0 ? `🚗 *Frais de livraison :* ${formatMoney(order.deliveryFee, currency)}\n` : ''}
-💵 *TOTAL : ${formatMoney(order.total || 0, currency)}*
-
-━━━━━━━━━━━━━━━━━━━
-📅 *Date de dépôt :* ${order.arrivalDate ? formatDate(order.arrivalDate) : '—'}
-📅 *Date de récupération :* ${order.pickupDate ? formatDate(order.pickupDate) : '—'}
-
-${displacementInfo}
-${safetyNotice}
-${order.notes ? `\n📝 *Notes :* ${order.notes}` : ''}
+💰 *Montant Total :* ${formatMoney(order.total || 0, currency)}
+📅 *Date d\'intervention :* ${order.pickupDate ? formatDate(order.pickupDate) : '—'}
 ━━━━━━━━━━━━━━━━━━━
 Merci de votre confiance ! 🙏
-${businessPhone ? `📞 Service Client : ${businessPhone}` : ''}
-  `.trim();
+`.trim();
 
-  const encodedMessage = encodeURIComponent(message);
-  let formattedPhone = phone.replace('+', '');
+      const encodedMessage = encodeURIComponent(message);
+      const formattedPhone = phone.replace('+', '');
+      const whatsappUrl = `https://wa.me/${formattedPhone}?text=${encodedMessage}`;
 
-  const whatsappUrl = `https://wa.me/${formattedPhone}?text=${encodedMessage}`;
-  if (window.cordova) {
-    window.open(whatsappUrl, '_system');
-  } else {
-    window.open(whatsappUrl, '_blank');
+      if (window.cordova) {
+        window.open(whatsappUrl, '_system');
+      } else {
+        window.open(whatsappUrl, '_blank');
+      }
+
+      if (copiedToClipboard) {
+        showToast('Image copiée & téléchargée. Veuillez la coller sur WhatsApp !');
+      } else {
+        showToast('Reçu téléchargé. Ouvrez WhatsApp pour l\'envoyer !');
+      }
+    }, 'image/png');
+
+  } catch (err) {
+    console.error('Erreur html2canvas:', err);
+    showToast('Erreur lors de la capture du reçu', 'error');
   }
-
-  showToast('WhatsApp ouvert avec la facture !');
 }
 
 /** Impression du reçu */
@@ -301,7 +347,7 @@ function printReceipt() {
       <link rel="preconnect" href="https://fonts.googleapis.com">
       <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
       <style>
-        * { box-scheme: border-box; margin: 0; padding: 0; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'Inter', sans-serif; background: #f5f5f5; padding: 20px; }
         .receipt-paper { max-width: 400px; margin: 0 auto; background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.15); }
         .receipt-header { background: linear-gradient(135deg, #1b4332, #0b1a13); color: #fff; padding: 24px 20px 20px; text-align: center; }
@@ -374,8 +420,8 @@ function formatDateTime(isoStr) {
 function getStatusLabel(status) {
   const map = {
     processing: 'En cours',
-    ready: 'Prêt à récupérer',
-    delivered: 'Livré & Payé',
+    ready: 'Réalisé',
+    delivered: 'Payé',
     cancelled: 'Annulé'
   };
   return map[status] || status;

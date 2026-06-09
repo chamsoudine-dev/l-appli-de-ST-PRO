@@ -1,7 +1,7 @@
 {
-  "name": "ST-PRO Pressing",
-  "short_name": "ST-PRO",
-  "description": "ST-PRO Pressing - Gestion de Pressing et Blanchisserie",
+  "name": "ST-PRO Jardin & Pots",
+  "short_name": "ST-PRO Jardin",
+  "description": "Application de gestion des interventions d'entretien de jardins et pots de fleurs",
   "start_url": "index.html",
   "display": "standalone",
   "background_color": "#0f172a",

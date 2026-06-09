@@ -104,10 +104,10 @@ function getInitials(firstname, lastname) {
 
 function getFrequencyLabel(freq) {
   const map = {
-    basique: 'Formule Standard (au vêtement)',
+    basique: 'Formule Standard (au passage)',
     standard: 'Abonnement Mensuel Express',
     premium: 'Formule Premium (Sur Devis)',
-    hebdo: 'Hebdomadaire (Ramassage & Lavage)',
+    hebdo: 'Hebdomadaire (Entretien & Arrosage)',
     custom: 'Prestation Personnalisée'
   };
   return map[freq] || freq || 'Non définie';
@@ -233,8 +233,8 @@ async function showClientDetail(clientId) {
 
     <!-- Détails Jardin -->
     <div class="glass-card" style="margin-bottom:16px;padding:14px">
-      <div style="font-size:11px;color:var(--accent-light);text-transform:uppercase;font-weight:700;letter-spacing:1px;margin-bottom:8px">Fiche Pressing</div>
-      <div class="detail-row"><span class="detail-label">Préférences de lavage</span><span class="detail-value" style="font-weight:600">${escapeHtml(client.plantInfo || 'Non précisé')}</span></div>
+      <div style="font-size:11px;color:var(--accent-light);text-transform:uppercase;font-weight:700;letter-spacing:1px;margin-bottom:8px">Fiche Jardin & Pots</div>
+      <div class="detail-row"><span class="detail-label">Consignes d'entretien</span><span class="detail-value" style="font-weight:600">${escapeHtml(client.plantInfo || 'Non précisé')}</span></div>
       <div class="detail-row"><span class="detail-label">Abonnement</span><span class="detail-value">${getFrequencyLabel(client.frequency)}</span></div>
       <div class="detail-row"><span class="detail-label">Jour de passage</span><span class="detail-value" style="color:var(--gold-light);font-weight:600">${escapeHtml(client.wateringDay || 'Non défini')}</span></div>
     </div>
@@ -243,7 +243,7 @@ async function showClientDetail(clientId) {
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
       <div class="glass-card" style="text-align:center;padding:12px">
         <div style="font-size:24px;font-weight:800;color:var(--gold-light)">${orders.length}</div>
-        <div style="font-size:11px;color:var(--text-muted)">Dépôts</div>
+        <div style="font-size:11px;color:var(--text-muted)">Interventions</div>
       </div>
       <div class="glass-card" style="text-align:center;padding:12px">
         <div style="font-size:18px;font-weight:800;color:var(--accent-light)">${formatMoney(totalSpent, currency)}</div>
@@ -253,7 +253,7 @@ async function showClientDetail(clientId) {
 
     <!-- Commandes récentes -->
     <div class="detail-section">
-      <div class="detail-section-title"><i class="fas fa-calendar-alt"></i> Dépôts récents</div>
+      <div class="detail-section-title"><i class="fas fa-calendar-alt"></i> Interventions récentes</div>
       ${ordersHtml}
     </div>
 
@@ -261,13 +261,13 @@ async function showClientDetail(clientId) {
     <div class="detail-actions">
       ${client.phone ? `
       <button class="btn-whatsapp btn-full" onclick="sendWateringReminderById(${client.id})">
-        <i class="fab fa-whatsapp"></i> Rappel de dépôt WhatsApp
+        <i class="fab fa-whatsapp"></i> Rappel de passage WhatsApp
       </button>` : ''}
       <button class="btn-primary btn-full" onclick="showEditClient(${client.id})">
         <i class="fas fa-edit"></i> Modifier Profil
       </button>
       <button class="btn-primary btn-full" onclick="closeModal('modal-order-detail');showNewOrderForClient(${client.id})">
-        <i class="fas fa-plus"></i> Créer un Dépôt
+        <i class="fas fa-plus"></i> Créer une Intervention
       </button>
       <button class="btn-danger btn-full" onclick="confirmDeleteClient(${client.id})">
         <i class="fas fa-trash"></i> Supprimer Client
@@ -531,14 +531,14 @@ async function sendWateringReminderById(clientId) {
   }
 
   const message = `
-🧺 *ST-PRO PRESSING*
+🌿 *ST-PRO JARDIN & POTS*
 ━━━━━━━━━━━━━━━━━━━
 Bonjour *${fullName}* 👋
 
-Nous vous rappelons que le ramassage / dépôt de vos vêtements est prévu pour *${dayStr}*.
+Nous vous rappelons que votre passage d'entretien est prévu pour *${dayStr}*.
 
 Formule : ${getFrequencyLabel(client.frequency)}
-Préférences : ${client.plantInfo || 'Aucune consigne particulière'}
+Consignes : ${client.plantInfo || 'Aucune consigne particulière'}
 ${riskWarning}
 ━━━━━━━━━━━━━━━━━━━
 Merci de votre confiance ! 🙏
