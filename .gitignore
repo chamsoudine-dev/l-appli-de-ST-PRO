@@ -1,0 +1,31 @@
+# Système d'exploitation
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Éditeurs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Node / npm (si utilisé)
+node_modules/
+npm-debug.log*
+
+# Logs
+*.log
+
+# Fichiers temporaires
+*.tmp
+*.bak
+~*
+
+# Cordova / build
+cordova-app/platforms/
+cordova-app/plugins/
+cordova-app/www/
+
+# Environnement
+.env
+.env.local
